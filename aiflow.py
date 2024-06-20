@@ -1,7 +1,8 @@
 # aiflow.py
-import json
-from openai import OpenAI
+import json 
+from openai import OpenAI # pip install openai
 from IPython.display import HTML
+from docx import Document  # pip install python-docx
 
 # chrome helper that converts a query result to a string, so we can use it in the class
 def chroma_query_result_to_text(obj):
@@ -211,6 +212,28 @@ class AIFlow:
                 file.write(str(value))
         return self
     
+    def dump_context_to_markdown(self, output_filename="content.md"):
+        with open(output_filename, 'w') as file:
+            for chapter, content in self.context_map.items():
+                # Write chapter title as a markdown header
+                file.write(f"# {chapter}\n\n")
+                # Write the content of the chapter
+                file.write(f"{content}\n\n")
+        return self
+    
+    def dump_context_to_docx(self, output_filename):
+
+        document = Document()
+        
+        for chapter, content in self.context_map.items():
+            # Add chapter title as a heading
+            document.add_heading(chapter, level=1)
+            # Add the content of the chapter
+            document.add_paragraph(content)
+        
+        document.save(output_filename)
+        return self
+        
     #
     # Functions to support embedding in other classes. Only implemented by returning strings
     #
