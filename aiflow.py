@@ -244,3 +244,19 @@ class AIFlow:
             return func(self.chat_messages) 
         return self
     
+    
+    #
+    # Saving state
+    #
+    def save_state(self, filename="state.json"):
+        state_to_save = self.__dict__.copy()  # Create a copy of __dict__
+        state_to_save.pop('client', None)  # Remove 'client' key if present
+        with open(filename, 'w') as f:
+            json.dump(state_to_save, f, indent=4)
+        return self
+
+    def load_state(self, filename="state.json"):
+        with open(filename, 'r') as f:
+            state = json.load(f)
+        self.__dict__.update(state)
+        return self
