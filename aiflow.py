@@ -54,6 +54,13 @@ class AIFlow:
         print("\nAudio Map:")
         print(json.dumps(self.audio_map, indent=4))
         return self
+    
+    def clear_self_data(self):
+        self.chat_messages = []
+        self.context_map = {}
+        self.images_map = {}
+        self.audio_map = {}
+        return self
         
     #
     # Chat methods
@@ -179,6 +186,11 @@ class AIFlow:
         print(self.context_map[label])
         return self
     
+    def show_context_keys(self):
+        for key in self.context_map.items():
+            print(key)
+        return self
+    
     def read_textfile_to_context(self, filename, label="latest_file"):
         try:
             with open(filename, 'r') as file:
@@ -188,6 +200,15 @@ class AIFlow:
             print(f"The file {filename} does not exist.")
         except Exception as e:
             print(f"An error occurred: {e}")
+        return self
+    
+    def dump_context_to_files(self):
+        for key, value in self.context_map.items():
+            filename = f"context_{key}.txt"
+            print(filename)
+            with open(filename, 'w') as file:
+                print(str(value))
+                file.write(str(value))
         return self
     
     #
