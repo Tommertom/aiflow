@@ -206,18 +206,14 @@ class AIFlow:
     def dump_context_to_files(self):
         for key, value in self.context_map.items():
             filename = f"context_{key}.txt"
-            print(filename)
             with open(filename, 'w') as file:
-                print(str(value))
                 file.write(str(value))
         return self
     
     def dump_context_to_markdown(self, output_filename="content.md"):
         with open(output_filename, 'w') as file:
             for chapter, content in self.context_map.items():
-                # Write chapter title as a markdown header
                 file.write(f"# {chapter}\n\n")
-                # Write the content of the chapter
                 file.write(f"{content}\n\n")
         return self
     
