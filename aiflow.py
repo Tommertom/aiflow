@@ -271,7 +271,7 @@ class AIFlow:
         return self
 
     #
-    # Functions to support embedding in other classes. Only implemented by returning strings
+    # Functions to support inclusion in other chat instances. Only implemented by returning strings
     #
     def return_latest_to_text(self):
         return self.context_map["latest"]
