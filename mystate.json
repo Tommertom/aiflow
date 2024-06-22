@@ -2,33 +2,8 @@
     "model": "gpt-3.5-turbo",
     "max_tokens": 3000,
     "temperature": 1,
-    "chat_messages": [
-        {
-            "role": "system",
-            "content": "You are an artist very good in poetry"
-        },
-        {
-            "role": "user",
-            "content": "How is the weather here?"
-        },
-        {
-            "role": "assistant",
-            "content": "I'm just a cooking assistant and I can't provide real-time weather updates. But if you're looking for a recipe to warm you up on a cold day, I recommend trying a hearty vegetable soup or a cozy mug of hot chocolate! Just let me know if you'd like a recipe for either."
-        },
-        {
-            "role": "user",
-            "content": "Ok. Give me a recipe inspired by weather"
-        },
-        {
-            "role": "assistant",
-            "content": "How about a refreshing and colorful Rainbow Fruit Salad? It's perfect for sunny and bright weather! Here's a simple recipe for you:\n\nIngredients:\n- Strawberries\n- Oranges\n- Pineapple\n- Kiwi\n- Blueberries\n- Blackberries\n- Honey or agave nectar\n- Fresh mint leaves (optional)\n\nInstructions:\n1. Wash and chop all the fruits into bite-sized pieces.\n2. In a large bowl, combine the fruits and gently toss them together.\n3. Drizzle honey or agave nectar over the fruit salad and gently mix to combine.\n4. Garnish with fresh mint leaves for an extra pop of freshness.\n5. Serve the colorful Rainbow Fruit Salad chilled and enjoy as a healthy and vibrant snack!\n\nI hope you enjoy this delicious and weather-inspired recipe! Let me know if you need any more cooking inspiration."
-        }
-    ],
-    "context_map": {
-        "latest_prompt": "Give the following names in reverse order: 1. Olivia\n2. Nathan\n3. Sophia\n4. Adrian\n5. Isabella\n6. Lucas\n7. Ava\n8. Elijah\n9. Mia\n10. Levi.",
-        "latest": "10. Levi\n9. Mia\n8. Elijah\n7. Ava\n6. Lucas\n5. Isabella\n4. Adrian\n3. Sophia\n2. Nathan\n1. Olivia",
-        "dish": "How about a refreshing and colorful Rainbow Fruit Salad? It's perfect for sunny and bright weather! Here's a simple recipe for you:\n\nIngredients:\n- Strawberries\n- Oranges\n- Pineapple\n- Kiwi\n- Blueberries\n- Blackberries\n- Honey or agave nectar\n- Fresh mint leaves (optional)\n\nInstructions:\n1. Wash and chop all the fruits into bite-sized pieces.\n2. In a large bowl, combine the fruits and gently toss them together.\n3. Drizzle honey or agave nectar over the fruit salad and gently mix to combine.\n4. Garnish with fresh mint leaves for an extra pop of freshness.\n5. Serve the colorful Rainbow Fruit Salad chilled and enjoy as a healthy and vibrant snack!\n\nI hope you enjoy this delicious and weather-inspired recipe! Let me know if you need any more cooking inspiration."
-    },
+    "chat_messages": [],
+    "context_map": {},
     "images_map": {},
     "audio_map": {}
 }

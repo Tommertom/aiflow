@@ -1,0 +1,12 @@
+{
+    "model": "gpt-3.5-turbo",
+    "max_tokens": 3000,
+    "temperature": 0,
+    "chat_messages": [],
+    "context_map": {
+        "latest_prompt": "Give me some recipes for the winter.",
+        "latest": "1. Slow Cooker Beef Stew: In a slow cooker, combine beef chunks, carrots, potatoes, onions, and celery. Add beef broth, tomato paste, and seasonings. Cook on low for 8 hours until the beef is tender and the vegetables are cooked through.\n\n2. Roasted Butternut Squash Soup: Roast butternut squash, onions, and garlic in the oven until caramelized. Blend with vegetable broth, coconut milk, and seasonings until smooth. Serve hot with a dollop of sour cream and fresh herbs.\n\n3. Baked Macaroni and Cheese: Cook macaroni noodles according to package instructions. In a saucepan, melt butter and whisk in flour to make a roux. Slowly add milk and whisk until thickened. Stir in shredded cheddar cheese until melted. Mix with cooked macaroni and transfer to a baking dish. Top with breadcrumbs and bake until golden and bubbly.\n\n4. Chicken Pot Pie: In a skillet, cook diced chicken with onions, carrots, and peas until cooked through. Add chicken broth and simmer until thickened. Pour mixture into a pie dish and top with a store-bought or homemade pie crust. Bake until crust is golden brown and filling is bubbly.\n\n5. Hot Chocolate: In a saucepan, heat milk and cocoa powder until hot but not boiling. Stir in sugar and vanilla extract. Serve in mugs topped with whipped cream and chocolate shavings.\n\n6. Spiced Mulled Wine: In a pot, combine red wine, orange slices, cinnamon sticks, cloves, and star anise. Heat over low heat until warm and fragrant. Serve in mugs with a cinnamon stick for garnish."
+    },
+    "images_map": {},
+    "audio_map": {}
+}
