@@ -5,6 +5,7 @@ from IPython.display import HTML
 from docx import Document  # pip install python-docx
 import urllib.request
 from pathlib import Path
+import os
 
 
 # chroma helper that converts a query result to a string, so we can use it in the class
@@ -33,6 +34,9 @@ class AIFlow:
         self.max_tokens = max_tokens
         self.temperature = temperature
         self.json_mode = False
+        self.completion_tokens = 0
+        self.prompt_tokens = 0
+        self.total_tokens = 0
 
         self.chat_messages = []
         self.context_map = {}
@@ -64,9 +68,18 @@ class AIFlow:
         print(f"Temperature: {self.temperature}")
         return self
 
-    #
+    def get_token_usage(self):
+        return {
+            "completion_tokens": self.completion_tokens,
+            "prompt_tokens": self.prompt_tokens,
+            "total_tokens": self.total_tokens,
+        }
+
+    # other config
     def set_output_folder(self, folder=""):
         self.default_folder_for_output = folder
+        if folder != "":
+            os.makedirs(self.default_folder_for_output, exist_ok=True)
         return self
 
     #
@@ -180,6 +193,10 @@ class AIFlow:
                 temperature=self.temperature,
                 messages=messages,
             )
+
+            # increase the tokens using completion.usage
+            self.add_token_usage(completion)
+
             return completion.choices[0].message.content
         except Exception as e:
             return str(e)
@@ -223,7 +240,7 @@ class AIFlow:
             print(key)
         return self
 
-    def read_textfile_to_context(self, filename, label="latest_file"):
+    def load_to_context(self, filename, label="latest_file"):
         try:
             with open(filename, "r") as file:
                 content = file.read()
@@ -234,11 +251,32 @@ class AIFlow:
             print(f"An error occurred: {e}")
         return self
 
+    def dump_context_to_file(self, label="latest"):
+        if self.default_folder_for_output != "":
+            filename = os.path.join(
+                self.default_folder_for_output, f"context_{label}.txt"
+            )
+        else:
+            filename = f"context_{label}.txt"
+
+        with open(filename, "w") as file:
+            file.write(str(self.context_map[label]))
+
+        return self
+
     def dump_context_to_files(self):
         for key, value in self.context_map.items():
-            filename = f"context_{key}.txt"
-            with open(filename, "w") as file:
-                file.write(str(value))
+            self.dump_context_to_file(label=key)
+        #     if self.default_folder_for_output != "":
+        #         filename = os.path.join(
+        #             self.default_folder_for_output, f"context_{key}.txt"
+        #         )
+        # else:
+        #     filename = f"context_{key}.txt"
+
+        # with open(filename, "w") as file:
+        #     file.write(str(value))
+
         return self
 
     def dump_context_to_markdown(self, output_filename="content.md"):
@@ -336,6 +374,9 @@ class AIFlow:
             style=style,
         )
 
+        # increase the tokens using completion.usage
+        self.add_token_usage(response)
+
         if response_format == "url":
             self.images_map[label] = response.data[0].url
             self.images_map["latest_image"] = response.data[0].url
@@ -404,6 +445,9 @@ class AIFlow:
             max_tokens=max_tokens,
         )
 
+        # increase the tokens using completion.usage
+        self.add_token_usage(response)
+
         print(response.choices[0].message)
         self.context_map["latest"] = response.choices[0].message
         self.context_map[label] = response.choices[0].message
@@ -438,6 +482,9 @@ class AIFlow:
             response_format=response_format,
         )
         response.stream_to_file(speech_file_path)
+
+        # increase the tokens using completion.usage
+        self.add_token_usage(response)
 
         self.audio_map[label] = filename
         self.context_map["latest_speech_file"] = filename
@@ -474,6 +521,7 @@ class AIFlow:
             response_format=response_format,
             temperature=temperature,
         )
+        self.add_token_usage(transcript)
 
         self.context_map["latest"] = transcript
         self.context_map[label] = transcript
@@ -497,3 +545,15 @@ class AIFlow:
         self.context_map[label] = moderation.to_json()
 
         return self
+
+    def add_token_usage(self, usage):
+        # increase the tokens using completion.usage
+        self.completion_tokens += usage.usage.completion_tokens
+        self.prompt_tokens += usage.usage.prompt_tokens
+        self.total_tokens += usage.usage.total_tokens
+
+        self.set_context_of["_completion_tokens"] = usage.usage.completion_tokens
+        self.set_context_of["_prompt_tokens"] = usage.usage.prompt_tokens
+        self.set_context_of["_total_tokens"] = usage.usage.total_tokens
+
+        return
