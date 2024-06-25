@@ -7,7 +7,7 @@ import urllib.request
 from pathlib import Path
 
 
-# chrome helper that converts a query result to a string, so we can use it in the class
+# chroma helper that converts a query result to a string, so we can use it in the class
 def chroma_query_result_to_text(obj):
     documents = obj.get("documents")
     if documents:
@@ -15,6 +15,14 @@ def chroma_query_result_to_text(obj):
         return concatenated_string
     else:
         return ""
+
+
+# function to run another function that may return something or nothing - this to support running code in the chain
+def run_function(self, func=lambda: "", label=""):
+    result = func()
+    if result is None and label != "":
+        self.context_map[label] = result
+    return self
 
 
 # models - gpt-4, gpt-4o, gpt-3.5-turbo
