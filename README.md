@@ -7,6 +7,8 @@ All other files and folders in the repo are not necessary to run your flows.
 
 [AIFlow demo](aiflow_demo.ipynb) - Jupyter workbook showing the works
 
+[Empty book to start](aiflow_start.ipynb) - Jupyter workbook to start your own project
+
 ## Class `AIFlow` Method Descriptions
 
 Here is a list of methods in the `AIFlow` class with one-line descriptions (in `aiflow.py`):
