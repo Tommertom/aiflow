@@ -135,8 +135,10 @@ class AIFlow:
             msg for msg in self.chat_messages if msg.get("role") != "system"
         ]
 
-        print(prompt)
-        print()
+        if self.verbose:
+            print(prompt)
+            print()
+
         prompt = self.replace_tags_with_content(prompt)
 
         # Insert new system message at the beginning of the list
@@ -144,16 +146,24 @@ class AIFlow:
         return self
 
     def add_user_chat(self, prompt, label="latest"):
-        print(prompt)
+        if self.verbose:
+            print(prompt)
+
         prompt = self.replace_tags_with_content(prompt)
+
         self.context_map["latest_prompt"] = prompt
         self.chat_messages.append({"role": "user", "content": prompt})
+
         response = self.call_openai_chat_api(messages=self.chat_messages)
+
         self.chat_messages.append({"role": "assistant", "content": response})
         self.context_map["latest"] = response
         self.context_map[label] = response
-        print(response)
-        print()
+
+        if self.verbose:
+            print(response)
+            print()
+
         return self
 
     def filter_messages(self, func):
@@ -171,16 +181,21 @@ class AIFlow:
     # Simple completion
     #
     def completion(self, prompt, label="latest"):
-        print(prompt)
-        print()
+        if self.verbose:
+            print(prompt)
+            print()
+
         prompt = self.replace_tags_with_content(prompt)
+
         self.context_map["latest_prompt"] = prompt
         messages = [{"role": "user", "content": prompt}]
         response = self.call_openai_chat_api(messages=messages)
         self.context_map["latest"] = response
         self.context_map[label] = response
-        print(response)
-        print()
+
+        if self.verbose:
+            print(response)
+            print()
         return self
 
     #
@@ -294,6 +309,7 @@ class AIFlow:
         response = self.call_openai_chat_api(messages=messages)
 
         self.set_context_of(label=label + "_heading", content=response)
+
         return self
 
     def dump_context_to_docx(self, output_filename):
@@ -308,6 +324,7 @@ class AIFlow:
             document.add_paragraph(str(content))
 
         document.save(output_filename)
+
         return self
 
     #
@@ -322,16 +339,18 @@ class AIFlow:
     def return_reduce_messages_to_text(self, func):
         if func is not None:
             return func(self.chat_messages)
+
         return self
 
     #
     # Saving state
     #
     def save_state(self, filename="state.json"):
-        state_to_save = self.__dict__.copy()  # Create a copy of __dict__
-        state_to_save.pop("client", None)  # Remove 'client' key if present
+        state_to_save = self.__dict__.copy()
+        state_to_save.pop("client", None)
         with open(filename, "w") as f:
             json.dump(state_to_save, f, indent=4)
+
         return self
 
     def load_state(self, filename="state.json"):
@@ -368,9 +387,6 @@ class AIFlow:
             style=style,
         )
 
-        # increase the tokens using completion.usage
-        # self.add_token_usage(response)
-
         if response_format == "url":
             self.images_map[label] = response.data[0].url
             self.images_map["latest_image"] = response.data[0].url
@@ -398,7 +414,8 @@ class AIFlow:
             if not output_filename.lower().endswith(".jpg"):
                 output_filename += ".jpg"
 
-        print("Saving ", label, output_filename)
+        if self.verbose:
+            print("Saving ", label, output_filename)
 
         # Check if the label exists in context_map before retrieving the image
         if label in self.images_map:
@@ -442,7 +459,9 @@ class AIFlow:
         # increase the tokens using completion.usage
         self.add_token_usage(response)
 
-        print(response.choices[0].message)
+        if self.verbose:
+            print(response.choices[0].message)
+
         self.context_map["latest"] = response.choices[0].message
         self.context_map[label] = response.choices[0].message
 
@@ -532,7 +551,8 @@ class AIFlow:
 
         moderation = self.client.moderations.create(input=prompt)
 
-        print(moderation.to_json())
+        if self.verbose:
+            print(moderation.to_json())
 
         self.context_map["latest_moderation"] = moderation.to_json()
         self.context_map[label] = moderation.to_json()
