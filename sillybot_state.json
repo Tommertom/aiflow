@@ -1,0 +1,14 @@
+{
+    "model": "gpt-3.5-turbo",
+    "max_tokens": 3000,
+    "temperature": 1,
+    "json_mode": false,
+    "completion_tokens": 0,
+    "prompt_tokens": 0,
+    "total_tokens": 0,
+    "chat_messages": [],
+    "context_map": {},
+    "images_map": {},
+    "audio_map": {},
+    "default_folder_for_output": ""
+}

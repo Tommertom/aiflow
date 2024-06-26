@@ -1,0 +1,16 @@
+{
+    "model": "gpt-3.5-turbo",
+    "max_tokens": 3000,
+    "temperature": 0,
+    "json_mode": false,
+    "completion_tokens": 0,
+    "prompt_tokens": 0,
+    "total_tokens": 0,
+    "chat_messages": [],
+    "context_map": {
+        "latest_moderation": "{\n  \"id\": \"modr-9eRs6hC8QI4P4zwzrFRmMRZRT5wGW\",\n  \"model\": \"text-moderation-007\",\n  \"results\": [\n    {\n      \"categories\": {\n        \"harassment\": false,\n        \"harassment/threatening\": false,\n        \"hate\": false,\n        \"hate/threatening\": false,\n        \"self-harm\": false,\n        \"self-harm/instructions\": false,\n        \"self-harm/intent\": false,\n        \"sexual\": false,\n        \"sexual/minors\": false,\n        \"violence\": false,\n        \"violence/graphic\": false,\n        \"self-harm\": false,\n        \"sexual/minors\": false,\n        \"hate/threatening\": false,\n        \"violence/graphic\": false,\n        \"self-harm/intent\": false,\n        \"self-harm/instructions\": false,\n        \"harassment/threatening\": false\n      },\n      \"category_scores\": {\n        \"harassment\": 0.013359030708670616,\n        \"harassment/threatening\": 2.8022158815588227e-8,\n        \"hate\": 0.00011000907397828996,\n        \"hate/threatening\": 5.6863641399729214e-12,\n        \"self-harm\": 8.968489062510798e-9,\n        \"self-harm/instructions\": 5.184334558872017e-11,\n        \"self-harm/intent\": 2.267186882676242e-9,\n        \"sexual\": 7.782967259117868e-6,\n        \"sexual/minors\": 1.4514487389760689e-8,\n        \"violence\": 5.038136805524118e-6,\n        \"violence/graphic\": 8.732466199035116e-7,\n        \"self-harm\": 8.968489062510798e-9,\n        \"sexual/minors\": 1.4514487389760689e-8,\n        \"hate/threatening\": 5.6863641399729214e-12,\n        \"violence/graphic\": 8.732466199035116e-7,\n        \"self-harm/intent\": 2.267186882676242e-9,\n        \"self-harm/instructions\": 5.184334558872017e-11,\n        \"harassment/threatening\": 2.8022158815588227e-8\n      },\n      \"flagged\": false\n    }\n  ]\n}"
+    },
+    "images_map": {},
+    "audio_map": {},
+    "default_folder_for_output": ""
+}

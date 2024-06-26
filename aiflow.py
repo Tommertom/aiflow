@@ -1,8 +1,8 @@
 # aiflow.py
 import json
-from openai import OpenAI  # pip install openai
+from openai import OpenAI
 from IPython.display import HTML
-from docx import Document  # pip install python-docx
+from docx import Document
 import urllib.request
 from pathlib import Path
 import os
@@ -16,14 +16,6 @@ def chroma_query_result_to_text(obj):
         return concatenated_string
     else:
         return ""
-
-
-# function to run another function that may return something or nothing - this to support running code in the chain
-def run_function(self, func=lambda: "", label=""):
-    result = func()
-    if result is None and label != "":
-        self.context_map[label] = result
-    return self
 
 
 # models - gpt-4, gpt-4o, gpt-3.5-turbo
@@ -44,6 +36,7 @@ class AIFlow:
         self.audio_map = {}
 
         self.default_folder_for_output = ""
+        self.verbose = True
 
     # model configs
     def set_temperature(self, temperature=0):
@@ -82,6 +75,10 @@ class AIFlow:
             os.makedirs(self.default_folder_for_output, exist_ok=True)
         return self
 
+    def set_verbose(self, level=True):
+        self.verbose = level
+        return self
+
     #
     # Some debugging tools
     #
@@ -101,6 +98,10 @@ class AIFlow:
         self.context_map = {}
         self.images_map = {}
         self.audio_map = {}
+        return self
+
+    # function to run another function that may return something or nothing - this to support running code in the chain
+    def run(self, func=lambda: "", label=""):
         return self
 
     #
@@ -195,7 +196,7 @@ class AIFlow:
             )
 
             # increase the tokens using completion.usage
-            self.add_token_usage(completion)
+            self.add_token_usage(completion.usage)
 
             return completion.choices[0].message.content
         except Exception as e:
@@ -206,7 +207,7 @@ class AIFlow:
     #
     def replace_tags_with_content(self, input_string=""):
         for key, value in self.context_map.items():
-            input_string = input_string.replace(f"[{key}]", value)
+            input_string = input_string.replace(f"[{key}]", str(value))
         return input_string
 
     #
@@ -251,15 +252,18 @@ class AIFlow:
             print(f"An error occurred: {e}")
         return self
 
-    def dump_context_to_file(self, label="latest"):
+    def dump_context_to_file(self, label="latest", filename=""):
         if self.default_folder_for_output != "":
-            filename = os.path.join(
+            filename_2 = os.path.join(
                 self.default_folder_for_output, f"context_{label}.txt"
             )
         else:
-            filename = f"context_{label}.txt"
+            filename_2 = f"context_{label}.txt"
 
-        with open(filename, "w") as file:
+        if filename != "":
+            filename_2 = filename
+
+        with open(filename_2, "w") as file:
             file.write(str(self.context_map[label]))
 
         return self
@@ -267,16 +271,6 @@ class AIFlow:
     def dump_context_to_files(self):
         for key, value in self.context_map.items():
             self.dump_context_to_file(label=key)
-        #     if self.default_folder_for_output != "":
-        #         filename = os.path.join(
-        #             self.default_folder_for_output, f"context_{key}.txt"
-        #         )
-        # else:
-        #     filename = f"context_{key}.txt"
-
-        # with open(filename, "w") as file:
-        #     file.write(str(value))
-
         return self
 
     def dump_context_to_markdown(self, output_filename="content.md"):
@@ -299,7 +293,7 @@ class AIFlow:
         messages = [{"role": "user", "content": full_prompt}]
         response = self.call_openai_chat_api(messages=messages)
 
-        self.set_context(label=label + "_heading", content=response)
+        self.set_context_of(label=label + "_heading", content=response)
         return self
 
     def dump_context_to_docx(self, output_filename):
@@ -311,7 +305,7 @@ class AIFlow:
             else:
                 document.add_heading(chapter, level=1)
 
-            document.add_paragraph(content)
+            document.add_paragraph(str(content))
 
         document.save(output_filename)
         return self
@@ -375,7 +369,7 @@ class AIFlow:
         )
 
         # increase the tokens using completion.usage
-        self.add_token_usage(response)
+        # self.add_token_usage(response)
 
         if response_format == "url":
             self.images_map[label] = response.data[0].url
@@ -521,7 +515,6 @@ class AIFlow:
             response_format=response_format,
             temperature=temperature,
         )
-        self.add_token_usage(transcript)
 
         self.context_map["latest"] = transcript
         self.context_map[label] = transcript
@@ -548,12 +541,12 @@ class AIFlow:
 
     def add_token_usage(self, usage):
         # increase the tokens using completion.usage
-        self.completion_tokens += usage.usage.completion_tokens
-        self.prompt_tokens += usage.usage.prompt_tokens
-        self.total_tokens += usage.usage.total_tokens
+        self.completion_tokens += usage.completion_tokens
+        self.prompt_tokens += usage.prompt_tokens
+        self.total_tokens += usage.total_tokens
 
-        self.set_context_of["_completion_tokens"] = usage.usage.completion_tokens
-        self.set_context_of["_prompt_tokens"] = usage.usage.prompt_tokens
-        self.set_context_of["_total_tokens"] = usage.usage.total_tokens
+        self.context_map["_completion_tokens"] = self.completion_tokens
+        self.context_map["_prompt_tokens"] = self.prompt_tokens
+        self.context_map["_total_tokens"] = self.total_tokens
 
         return

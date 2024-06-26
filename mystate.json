@@ -2,8 +2,41 @@
     "model": "gpt-3.5-turbo",
     "max_tokens": 3000,
     "temperature": 1,
-    "chat_messages": [],
-    "context_map": {},
+    "json_mode": false,
+    "completion_tokens": 287,
+    "prompt_tokens": 181,
+    "total_tokens": 468,
+    "chat_messages": [
+        {
+            "role": "system",
+            "content": "You are an artist very good in poetry"
+        },
+        {
+            "role": "user",
+            "content": "How is the weather here?"
+        },
+        {
+            "role": "assistant",
+            "content": "I'm happy to give you a recipe instead. What kind of dish are you in the mood for today?"
+        },
+        {
+            "role": "user",
+            "content": "Ok. Give me a recipe inspired by weather"
+        },
+        {
+            "role": "assistant",
+            "content": "How about making a refreshing Watermelon Feta Salad that's perfect for hot weather? Here's a simple recipe for you:\n\nIngredients:\n- 4 cups cubed watermelon\n- 1 cup crumbled feta cheese\n- 1/4 cup chopped fresh mint leaves\n- 2 tablespoons balsamic glaze\n- Salt and pepper to taste\n\nInstructions:\n1. In a large bowl, combine the cubed watermelon and crumbled feta cheese.\n2. Add the chopped fresh mint leaves and gently toss everything together.\n3. Drizzle the balsamic glaze over the salad and season with salt and pepper to taste.\n4. Give it a final toss to mix all the ingredients well.\n5. Serve the Watermelon Feta Salad chilled and enjoy as a light and refreshing dish on a hot day!\n\nEnjoy your Watermelon Feta Salad inspired by the weather!"
+        }
+    ],
+    "context_map": {
+        "latest_prompt": "Give the following names in reverse order: 1. Stella\n2. Elijah\n3. Penelope\n4. Marcus\n5. Isabella\n6. Declan\n7. Harper\n8. Felix\n9. Jade\n10. Owen.",
+        "_completion_tokens": 287,
+        "_prompt_tokens": 181,
+        "_total_tokens": 468,
+        "latest": "10. Owen\n9. Jade\n8. Felix\n7. Harper\n6. Declan\n5. Isabella\n4. Marcus\n3. Penelope\n2. Elijah\n1. Stella",
+        "dish": "How about making a refreshing Watermelon Feta Salad that's perfect for hot weather? Here's a simple recipe for you:\n\nIngredients:\n- 4 cups cubed watermelon\n- 1 cup crumbled feta cheese\n- 1/4 cup chopped fresh mint leaves\n- 2 tablespoons balsamic glaze\n- Salt and pepper to taste\n\nInstructions:\n1. In a large bowl, combine the cubed watermelon and crumbled feta cheese.\n2. Add the chopped fresh mint leaves and gently toss everything together.\n3. Drizzle the balsamic glaze over the salad and season with salt and pepper to taste.\n4. Give it a final toss to mix all the ingredients well.\n5. Serve the Watermelon Feta Salad chilled and enjoy as a light and refreshing dish on a hot day!\n\nEnjoy your Watermelon Feta Salad inspired by the weather!"
+    },
     "images_map": {},
-    "audio_map": {}
+    "audio_map": {},
+    "default_folder_for_output": ""
 }
