@@ -5,7 +5,7 @@ All other files and folders in the repo are not necessary to run your flows.
 
 ## Demo
 
-[AIFlow demo](aiflow_demo.ipynb)
+[AIFlow demo](aiflow_demo.ipynb) - Jupyter workbook showing the works
 
 ## Class `AIFlow` Method Descriptions
 
