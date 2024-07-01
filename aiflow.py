@@ -6,6 +6,7 @@ from docx import Document
 import urllib.request
 from pathlib import Path
 import os
+from IPython.display import Markdown, display
 
 
 # chroma helper that converts a query result to a string, so we can use it in the class
@@ -16,6 +17,26 @@ def chroma_query_result_to_text(obj):
         return concatenated_string
     else:
         return ""
+
+
+# chroma helper that converts the query to a list
+def chroma_query_to_list(result):
+    ids = result["ids"][0]
+    metadatas = result["metadatas"][0]
+    distances = result["distances"][0]
+
+    # combine each n-th item from ids, metadatas and distances and put it in an object. Append to a result list and return
+    if len(ids) != len(metadatas) or len(ids) != len(distances):
+        raise ValueError("Lengths of ids, metadatas, and distances must be the same")
+
+    result_list = []
+    for i in range(len(ids)):
+        # Create an object with id, metadata, and distance
+        item = {"id": ids[i], "metadata": metadatas[i], "distance": distances[i]}
+        # Append the object to the result list
+        result_list.append(item)
+
+    return result_list
 
 
 # models - gpt-4, gpt-4o, gpt-3.5-turbo
@@ -339,8 +360,10 @@ class AIFlow:
     def return_reduce_messages_to_text(self, func):
         if func is not None:
             return func(self.chat_messages)
-
         return self
+
+    def return_latest_as_md(self):
+        return display(Markdown(self.context_map["latest"]))
 
     #
     # Saving state
