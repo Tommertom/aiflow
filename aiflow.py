@@ -7,6 +7,7 @@ import urllib.request
 from pathlib import Path
 import os
 from IPython.display import Markdown, display
+import markdown
 
 
 # chroma helper that converts a query result to a string, so we can use it in the class
@@ -58,6 +59,7 @@ class AIFlow:
 
         self.default_folder_for_output = ""
         self.verbose = True
+        self.latest_state_filename = ""
 
     # model configs
     def set_temperature(self, temperature=0):
@@ -273,9 +275,13 @@ class AIFlow:
         return self
 
     def show_context_keys(self):
-        for key in self.context_map.items():
-            print(key)
+        keys_list = list(self.context_map.keys())
+        keys_str = ", ".join(keys_list)
+        print(keys_str)
         return self
+
+    def return_context_keys(self):
+        return self.context_map.keys()
 
     def load_to_context(self, filename, label="latest_file"):
         try:
@@ -333,18 +339,43 @@ class AIFlow:
 
         return self
 
-    def dump_context_to_docx(self, output_filename):
+    def dump_context_to_docx(self, output_filename, chapters_to_include=[]):
         document = Document()
         for chapter, content in self.context_map.items():
-            heading_key = chapter + "_heading"
-            if heading_key in self.context_map:
-                document.add_heading(self.context_map[heading_key], level=1)
-            else:
-                document.add_heading(chapter, level=1)
+            if chapter in chapters_to_include:
+                heading_key = chapter + "_heading"
+                if heading_key in self.context_map:
+                    document.add_heading(self.context_map[heading_key], level=1)
+                else:
+                    document.add_heading(chapter, level=1)
 
-            document.add_paragraph(str(content))
+                document.add_paragraph(str(content))
 
         document.save(output_filename)
+
+        return self
+
+    def dump_context_to_html(self, output_filename, chapters_to_include=[]):
+        html_content = "<html><body>"
+
+        for chapter, content in self.context_map.items():
+            if chapter in chapters_to_include or chapters_to_include == []:
+                heading_key = chapter + "_heading"
+                if heading_key in self.context_map:
+                    heading = self.context_map[heading_key]
+                else:
+                    heading = chapter
+
+                html_content += f"<h1>{heading}</h1>"
+                html_content += markdown.markdown(str(content))
+
+        html_content += "</body></html>"
+
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(output_filename), exist_ok=True)
+
+        with open(output_filename, "w", encoding="utf-8") as f:
+            f.write(html_content)
 
         return self
 
@@ -355,7 +386,7 @@ class AIFlow:
         return self.context_map["latest"]
 
     def return_context_to_text(self, label="latest"):
-        return self.context_map(label)
+        return self.context_map[label]
 
     def return_reduce_messages_to_text(self, func):
         if func is not None:
@@ -365,10 +396,21 @@ class AIFlow:
     def return_latest_as_md(self):
         return display(Markdown(self.context_map["latest"]))
 
+    def return_context_as_md(self, label="latest"):
+        return display(Markdown(self.context_map[label]))
+
     #
     # Saving state
     #
-    def save_state(self, filename="state.json"):
+    def save_state(self, filename=""):
+        if filename == "" and self.latest_state_filename == "":
+            print("Error - no state filename provided")
+
+        if filename == "":
+            filename = self.latest_state_filename
+
+        self.latest_state_filename = filename
+
         state_to_save = self.__dict__.copy()
         state_to_save.pop("client", None)
         with open(filename, "w") as f:
@@ -377,9 +419,12 @@ class AIFlow:
         return self
 
     def load_state(self, filename="state.json"):
-        with open(filename, "r") as f:
-            state = json.load(f)
-        self.__dict__.update(state)
+        try:
+            with open(filename, "r") as f:
+                state = json.load(f)
+            self.__dict__.update(state)
+        except FileNotFoundError:
+            print(f"File '{filename}' not found.")
         return self
 
     #
