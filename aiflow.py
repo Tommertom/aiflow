@@ -225,13 +225,19 @@ class AIFlow:
     # OpenAI caller
     #
     def call_openai_chat_api(self, messages=[]):
+        params = {
+            "model": self.model,
+            "max_tokens": self.max_tokens,
+            "temperature": self.temperature,
+            "messages": messages,
+        }
+
+        # Conditionally add response_format
+        if self.json_mode:
+            params["response_format"] = {"type": "json_object"}
+
         try:
-            completion = self.client.chat.completions.create(
-                model=self.model,
-                max_tokens=self.max_tokens,
-                temperature=self.temperature,
-                messages=messages,
-            )
+            completion = self.client.chat.completions.create(**params)
 
             # increase the tokens using completion.usage
             self.add_token_usage(completion.usage)
@@ -355,11 +361,70 @@ class AIFlow:
 
         return self
 
+    # def dump_context_to_html(self, output_filename, chapters_to_include=[]):
+    #     html_content = "<html><body>"
+
+    #     for chapter, content in self.context_map.items():
+    #         if chapter in chapters_to_include or chapters_to_include == []:
+    #             heading_key = chapter + "_heading"
+    #             if heading_key in self.context_map:
+    #                 heading = self.context_map[heading_key]
+    #             else:
+    #                 heading = chapter
+
+    #             html_content += f"<h1>{heading}</h1>"
+    #             html_content += markdown.markdown(str(content))
+
+    #     html_content += "</body></html>"
+
+    #     # Ensure the directory exists
+    #     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
+
+    #     with open(output_filename, "w", encoding="utf-8") as f:
+    #         f.write(html_content)
+
+    #     return self
+
+    # def dump_context_to_html(self, output_filename, chapters_to_include=[]):
+    #     html_content = "<html><body>"
+
+    #     for chapter, content in self.context_map.items():
+    #         if chapter in chapters_to_include or chapters_to_include == []:
+    #             heading_key = chapter + "_heading"
+    #             if heading_key in self.context_map:
+    #                 heading = self.context_map[heading_key]
+    #             else:
+    #                 heading = chapter
+
+    #             html_content += f"<h1>{heading}</h1>"
+    #             html_content += markdown.markdown(str(content))
+
+    #     html_content += "</body></html>"
+
+    #     # Ensure the directory exists
+    #     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
+
+    #     with open(output_filename, "w", encoding="utf-8") as f:
+    #         f.write(html_content)
+
+    #     return self
+
     def dump_context_to_html(self, output_filename, chapters_to_include=[]):
         html_content = "<html><body>"
 
-        for chapter, content in self.context_map.items():
-            if chapter in chapters_to_include or chapters_to_include == []:
+        if chapters_to_include:
+            for chapter in chapters_to_include:
+                if chapter in self.context_map:
+                    heading_key = chapter + "_heading"
+                    if heading_key in self.context_map:
+                        heading = self.context_map[heading_key]
+                    else:
+                        heading = chapter
+
+                    html_content += f"<h1>{heading}</h1>"
+                    html_content += markdown.markdown(str(self.context_map[chapter]))
+        else:
+            for chapter, content in self.context_map.items():
                 heading_key = chapter + "_heading"
                 if heading_key in self.context_map:
                     heading = self.context_map[heading_key]
@@ -405,6 +470,7 @@ class AIFlow:
     def save_state(self, filename=""):
         if filename == "" and self.latest_state_filename == "":
             print("Error - no state filename provided")
+            return self
 
         if filename == "":
             filename = self.latest_state_filename
@@ -419,6 +485,7 @@ class AIFlow:
         return self
 
     def load_state(self, filename="state.json"):
+        self.latest_state_filename = filename
         try:
             with open(filename, "r") as f:
                 state = json.load(f)
