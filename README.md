@@ -9,7 +9,7 @@ All other files and folders in the repo are not necessary to run your flows.
 
 [Empty book to start](aiflow_start.ipynb) - Jupyter workbook to start your own project
 
-[Generating a real book](42book.ipynb) - A project I did to generate a book inspired on The Hitchikers Guide (fun project no real business goals)
+[Generating a real book](42book.ipynb) - A project I did to generate a book inspired on The Hitchikers Guide (fun project no real business goals) [PDF version after edits](42-illustrated.pdf) - the version after manual edits on layout and adding images from dalle3.
 
 ## Class `AIFlow` Method Descriptions
 
