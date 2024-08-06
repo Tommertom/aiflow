@@ -60,6 +60,7 @@ class AIFlow:
         self.default_folder_for_output = ""
         self.verbose = True
         self.latest_state_filename = ""
+        self.save_state_per_step = False
 
     # model configs
     def set_temperature(self, temperature=0):
@@ -100,6 +101,10 @@ class AIFlow:
 
     def set_verbose(self, level=True):
         self.verbose = level
+        return self
+
+    def set_step_save(self, step=False):
+        self.save_state_per_step = step
         return self
 
     #
@@ -162,6 +167,9 @@ class AIFlow:
             print(prompt)
             print()
 
+        if self.save_state_per_step:
+            self.save_state()
+
         prompt = self.replace_tags_with_content(prompt)
 
         # Insert new system message at the beginning of the list
@@ -186,6 +194,9 @@ class AIFlow:
         if self.verbose:
             print(response)
             print()
+
+        if self.save_state_per_step:
+            self.save_state()
 
         return self
 
@@ -219,6 +230,10 @@ class AIFlow:
         if self.verbose:
             print(response)
             print()
+
+        if self.save_state_per_step:
+            self.save_state()
+
         return self
 
     #
@@ -328,20 +343,45 @@ class AIFlow:
                 file.write(f"{content}\n\n")
         return self
 
+    def generate_headings_for_context(
+        self,
+        labels=[],
+        prompt="Generate a short 10 word summary of the following content:\n",
+        replace=True,
+    ):
+        # iterate through all labels and call generate_heading_for_context for each label
+        for label in labels:
+            self.generate_heading_for_context(
+                label=label, prompt=prompt, replace=replace
+            )
+
+        return self
+
     def generate_heading_for_context(
         self,
         label="latest",
         prompt="Generate a short 10 word summary of the following content:\n",
+        replace=True,
     ):
         content = self.context_map.get(label, "")
         if not content:
             return self
-        full_prompt = f"{prompt}{content}"
 
-        messages = [{"role": "user", "content": full_prompt}]
-        response = self.call_openai_chat_api(messages=messages)
+        # Check if the heading already exists
+        heading_label = label + "_heading"
+        existing_heading = self.context_map.get(heading_label)
 
-        self.set_context_of(label=label + "_heading", content=response)
+        # Conditionally call the API
+        if replace or not existing_heading:
+            # Generate the prompt
+            full_prompt = f"{prompt}{content}"
+            messages = [{"role": "user", "content": full_prompt}]
+            response = self.call_openai_chat_api(messages=messages)
+
+            self.set_context_of(label=heading_label, content=response)
+
+            if self.save_state_per_step:
+                self.save_state()
 
         return self
 
