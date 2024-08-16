@@ -1,7 +1,7 @@
 # aiflow.py
 import json
 import logging
-from openai import OpenAI
+from openai import OpenAI, OpenAIError
 from typing import Optional, Callable, List, Dict, Union
 from enum import Enum
 from IPython.display import HTML
