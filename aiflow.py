@@ -438,46 +438,51 @@ class AIFlow:
                 file.write(f"{content}\n\n")
         return self
 
-    def generate_headings_for_contexts(
-        self, 
-        labels: List[str] = [], 
-        prompt: str = "Generate a short 10 word summary of the following content:\n", 
-        replace: bool = True
-    ):
-        # iterate through all labels and call generate_heading_for_context for each label
-        for label in labels:
-            self.generate_heading_for_context(
-                label=label, prompt=prompt, replace=replace
-            )
-
-        return self
-
     def generate_heading_for_context(
         self, 
-        label: str = "latest", 
-        prompt: str = "Generate a short 10 word summary of the following content:\n", 
-        replace: bool = True
-    ):
+        label: str, 
+        prompt: str, 
+        replace: bool
+    ) -> None:
+        """
+        Generate a heading for a single context.
+
+        :param label: Label for the context
+        :param prompt: Prompt for generating the heading
+        :param replace: Whether to replace the existing heading
+        """
         content = self.context_map.get(label, "")
         if not content:
-            return self
+            return
 
-        # Check if the heading already exists
         heading_label = label + "_heading"
         existing_heading = self.context_map.get(heading_label)
 
-        # Conditionally call the API
         if replace or not existing_heading:
-            # Generate the prompt
             full_prompt = f"{prompt}{content}"
             messages = [{"role": "user", "content": full_prompt}]
             response = self.call_openai_chat_api(messages=messages)
-
             self.set_context_of(label=heading_label, content=response)
 
             if self.save_state_per_step:
                 self.save_state()
 
+    def generate_headings_for_contexts(
+        self, 
+        labels: List[str] = [], 
+        prompt: str = "Generate a short 10 word summary of the following content:\n", 
+        replace: bool = True
+    ) -> 'AIFlow':
+        """
+        Generate headings for multiple contexts.
+
+        :param labels: List of labels for the contexts
+        :param prompt: Prompt for generating the headings
+        :param replace: Whether to replace the existing headings
+        :return: self
+        """
+        for label in labels:
+            self.generate_heading_for_context(label, prompt, replace)
         return self
 
     def save_context_to_docx(self, output_filename: str, chapters_to_include: List[str] = []) -> 'AIFlow':
@@ -596,16 +601,30 @@ class AIFlow:
     #
     def create_image(
         self,
-        model="dall-e-2",
-        style="vivid",
-        response_format="url",
-        prompt="A white siamese cat",
-        size="1024x1024",
-        quality="standard",
-        n=1,
-        label="latest_image",
-        html=False,
-    ):
+        model: str = "dall-e-2",
+        style: str = "vivid",
+        response_format: str = "url",
+        prompt: str = "A white siamese cat",
+        size: str = "1024x1024",
+        quality: str = "standard",
+        n: int = 1,
+        label: str = "latest_image",
+        html: bool = False,
+    ) -> 'AIFlow':
+        """
+        Generate an image.
+
+        :param model: Model to use for image generation
+        :param style: Style of the image
+        :param response_format: Format of the response (url or b64_json)
+        :param prompt: Prompt for image generation
+        :param size: Size of the image
+        :param quality: Quality of the image
+        :param n: Number of images to generate
+        :param label: Label for the generated image
+        :param html: Whether to return HTML for displaying the image
+        :return: self
+        """
         response = self.client.images.generate(
             model=model,
             prompt=prompt,
@@ -616,37 +635,33 @@ class AIFlow:
             style=style,
         )
 
-        if response_format == "url":
-            self.images_map[label] = response.data[0].url
-            self.images_map["latest_image"] = response.data[0].url
-
-        if response_format == "b64_json":
-            self.images_map[label] = response.data[0].b64_json
-            self.images_map["latest_image"] = response.data[0].b64_json
+        image_data = response.data[0]
+        self.images_map[label] = image_data.url if response_format == "url" else image_data.b64_json
+        self.images_map["latest_image"] = self.images_map[label]
 
         self.context_map["latest_image_prompt"] = prompt
-        self.context_map["latest_revised_image_prompt"] = response.data[
-            0
-        ].revised_prompt
+        self.context_map["latest_revised_image_prompt"] = image_data.revised_prompt
 
         if html:
             return HTML(f'<img src="{self.images_map[label]}" />')
 
         return self
 
-    def save_image_to_file(self, label="latest_image", filename=""):
-        if filename == "":
-            output_filename = "image_" + label + ".jpg"
-        else:
-            output_filename = filename
-            # Ensure the filename ends with '.jpg'
-            if not output_filename.lower().endswith(".jpg"):
-                output_filename += ".jpg"
+    def save_image_to_file(self, label: str = "latest_image", filename: str = "") -> 'AIFlow':
+        """
+        Save the generated image to a file.
+
+        :param label: Label for the generated image
+        :param filename: Name of the file to save the image
+        :return: self
+        """
+        output_filename = filename if filename else f"image_{label}.jpg"
+        if not output_filename.lower().endswith(".jpg"):
+            output_filename += ".jpg"
 
         if self.verbose:
             logging.info(f"Saving {label} to {output_filename}")
 
-        # Check if the label exists in context_map before retrieving the image
         if label in self.images_map:
             urllib.request.urlretrieve(self.images_map[label], output_filename)
 
