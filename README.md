@@ -3,6 +3,10 @@
 Something to simplify your AI pipelines using the builder pattern - see `aiflow.py`.
 All other files and folders in the repo are not necessary to run your flows.
 
+## Optimization
+
+The code has been optimized using the Aider tool.
+
 ## Demo
 
 [AIFlow demo](aiflow_demo.ipynb) - Jupyter workbook showing the works
