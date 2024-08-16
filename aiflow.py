@@ -385,7 +385,7 @@ class AIFlow:
 
         return self
 
-    def dump_context_to_docx(self, output_filename, chapters_to_include=[]):
+    def save_context_to_docx(self, output_filename, chapters_to_include=[]):
         document = Document()
         for chapter, content in self.context_map.items():
             if chapter in chapters_to_include:
@@ -449,7 +449,7 @@ class AIFlow:
 
     #     return self
 
-    def dump_context_to_html(self, output_filename, chapters_to_include=[]):
+    def save_context_to_html(self, output_filename, chapters_to_include=[]):
         html_content = "<html><body>"
 
         if chapters_to_include:
@@ -487,27 +487,27 @@ class AIFlow:
     #
     # Functions to support inclusion in other chat instances. Only implemented by returning strings
     #
-    def return_latest_to_text(self):
+    def get_latest_context_as_text(self):
         return self.context_map["latest"]
 
-    def return_context_to_text(self, label="latest"):
+    def get_context_as_text(self, label="latest"):
         return self.context_map[label]
 
-    def return_reduce_messages_to_text(self, func):
+    def get_reduced_chat_messages_as_text(self, func):
         if func is not None:
             return func(self.chat_messages)
         return self
 
-    def return_latest_as_md(self):
+    def display_latest_context_as_markdown(self):
         return display(Markdown(self.context_map["latest"]))
 
-    def return_context_as_md(self, label="latest"):
+    def display_context_as_markdown(self, label="latest"):
         return display(Markdown(self.context_map[label]))
 
     #
     # Saving state
     #
-    def save_state(self, filename=""):
+    def save_internal_state(self, filename=""):
         if filename == "" and self.latest_state_filename == "":
             print("Error - no state filename provided")
             return self
@@ -524,7 +524,7 @@ class AIFlow:
 
         return self
 
-    def load_state(self, filename="state.json"):
+    def load_internal_state(self, filename="state.json"):
         self.latest_state_filename = filename
         try:
             with open(filename, "r") as f:
@@ -580,7 +580,7 @@ class AIFlow:
 
         return self
 
-    def dump_image_to_file(self, label="latest_image", filename=""):
+    def save_image_to_file(self, label="latest_image", filename=""):
         if filename == "":
             output_filename = "image_" + label + ".jpg"
         else:
@@ -720,7 +720,7 @@ class AIFlow:
     # Moderation
     # https://platform.openai.com/docs/guides/moderation/overview
     #
-    def generate_moderation(self, prompt="", label="latest_moderation"):
+    def create_moderation(self, prompt="", label="latest_moderation"):
         if prompt == "":
             return self
 
@@ -734,7 +734,7 @@ class AIFlow:
 
         return self
 
-    def add_token_usage(self, usage):
+    def update_token_usage(self, usage):
         # increase the tokens using completion.usage
         self.completion_tokens += usage.completion_tokens
         self.prompt_tokens += usage.prompt_tokens
