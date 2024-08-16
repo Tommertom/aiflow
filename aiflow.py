@@ -565,7 +565,9 @@ class AIFlow:
         """
         return self.context_map[label]
 
-    def get_reduced_chat_messages_as_text(self, func: Optional[Callable[[List[Dict[str, str]]], str]]) -> str:
+    def get_reduced_chat_messages_as_text(
+        self, func: Optional[Callable[[List[Dict[str, str]]], str]]
+    ) -> str:
         """
         Get reduced chat messages as text using a function.
 
@@ -641,7 +643,18 @@ class AIFlow:
     # 1024x1024 512x512
     # https://platform.openai.com/docs/api-reference/images/create
     #
-    def create_image(self, model: str = "dall-e-2", style: str = "vivid", response_format: str = "url", prompt: str = "A white siamese cat", size: str = "1024x1024", quality: str = "standard", n: int = 1, label: str = "latest_image", html: bool = False) -> "AIFlow":
+    def create_image(
+        self,
+        model: str = "dall-e-2",
+        style: str = "vivid",
+        response_format: str = "url",
+        prompt: str = "A white siamese cat",
+        size: str = "1024x1024",
+        quality: str = "standard",
+        n: int = 1,
+        label: str = "latest_image",
+        html: bool = False,
+    ) -> "AIFlow":
         """
         Generate an image.
 
@@ -694,7 +707,9 @@ class AIFlow:
 
         return self
 
-    def save_image_to_file(self, label: str = "latest_image", filename: str = "") -> "AIFlow":
+    def save_image_to_file(
+        self, label: str = "latest_image", filename: str = ""
+    ) -> "AIFlow":
         """
         Save the generated image to a file.
 
@@ -725,7 +740,15 @@ class AIFlow:
     # Vision model
     # https://platform.openai.com/docs/guides/vision
     #
-    def analyze_image(self, image: str = "", prompt: str = "What's in this image?", model: str = "gpt-4o", label: str = "latest", detail: str = "low", max_tokens: int = 300) -> "AIFlow":
+    def analyze_image(
+        self,
+        image: str = "",
+        prompt: str = "What's in this image?",
+        model: str = "gpt-4o",
+        label: str = "latest",
+        detail: str = "low",
+        max_tokens: int = 300,
+    ) -> "AIFlow":
         """
         Analyze an image.
 
@@ -772,7 +795,17 @@ class AIFlow:
     # MP3 generation
     # https://platform.openai.com/docs/api-reference/audio/createSpeech
     #
-    def create_speech(self, model: str = "tts-1", voice: str = "alloy", response_format: str = "mp3", prompt: str = "A white siamese cat", speed: int = 1, filename: str = "", label: str = "latest_speech", html: bool = False) -> "AIFlow":
+    def create_speech(
+        self,
+        model: str = "tts-1",
+        voice: str = "alloy",
+        response_format: str = "mp3",
+        prompt: str = "A white siamese cat",
+        speed: int = 1,
+        filename: str = "",
+        label: str = "latest_speech",
+        html: bool = False,
+    ) -> "AIFlow":
         """
         Generate speech from text.
 
@@ -816,7 +849,16 @@ class AIFlow:
 
     # Sound transcription
     # https://platform.openai.com/docs/api-reference/audio/createTranscription
-    def create_transcription(self, filename: str = "", model: str = "whisper-1", language: str = "en", prompt: str = "", response_format: str = "text", temperature: int = 0, label: str = "latest") -> "AIFlow":
+    def create_transcription(
+        self,
+        filename: str = "",
+        model: str = "whisper-1",
+        language: str = "en",
+        prompt: str = "",
+        response_format: str = "text",
+        temperature: int = 0,
+        label: str = "latest",
+    ) -> "AIFlow":
         """
         Transcribe audio to text.
 
@@ -852,7 +894,9 @@ class AIFlow:
     # Moderation
     # https://platform.openai.com/docs/guides/moderation/overview
     #
-    def create_moderation(self, prompt: str = "", label: str = "latest_moderation") -> "AIFlow":
+    def create_moderation(
+        self, prompt: str = "", label: str = "latest_moderation"
+    ) -> "AIFlow":
         """
         Create a moderation request.
 
