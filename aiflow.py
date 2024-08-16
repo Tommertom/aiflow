@@ -12,7 +12,9 @@ from IPython.display import Markdown, display
 import markdown
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 # chroma helper that converts a query result to a string, so we can use it in the class
@@ -208,7 +210,9 @@ class AIFlow:
             self.chat_messages = func(self.chat_messages)
         return self
 
-    def reduce_messages_to_text(self, func: Optional[Callable[[List[Dict[str, str]]], str]]) -> 'AIFlow':
+    def reduce_messages_to_text(
+        self, func: Optional[Callable[[List[Dict[str, str]]], str]]
+    ) -> "AIFlow":
         """
         Reduce chat messages to text using a function.
 
@@ -223,7 +227,7 @@ class AIFlow:
     #
     # Simple completion
     #
-    def completion(self, prompt: str, label: str = "latest") -> 'AIFlow':
+    def completion(self, prompt: str, label: str = "latest") -> "AIFlow":
         """
         Get a completion for a given prompt.
 
@@ -300,7 +304,7 @@ class AIFlow:
     #
     # Context functions
     #
-    def copy_latest_to(self, label: str = "latest") -> 'AIFlow':
+    def copy_latest_to(self, label: str = "latest") -> "AIFlow":
         """
         Copy the latest context to a specified label.
 
@@ -310,7 +314,9 @@ class AIFlow:
         self.context_map[label] = self.context_map["latest"]
         return self
 
-    def transform_context(self, label: str = "latest", func: Callable[[str], str] = lambda x: x) -> 'AIFlow':
+    def transform_context(
+        self, label: str = "latest", func: Callable[[str], str] = lambda x: x
+    ) -> "AIFlow":
         """
         Transform the context using a function.
 
@@ -322,7 +328,7 @@ class AIFlow:
             self.context_map[label] = func(self.context_map[label])
         return self
 
-    def set_context_of(self, content: str = "", label: str = "latest") -> 'AIFlow':
+    def set_context_of(self, content: str = "", label: str = "latest") -> "AIFlow":
         """
         Set the context for a specified label.
 
@@ -334,7 +340,7 @@ class AIFlow:
             self.context_map[label] = content
         return self
 
-    def delete_context(self, label: str = "latest") -> 'AIFlow':
+    def delete_context(self, label: str = "latest") -> "AIFlow":
         """
         Delete the context for a specified label.
 
@@ -345,7 +351,7 @@ class AIFlow:
             del self.context_map[label]
         return self
 
-    def show_context_of(self, label: str = "latest") -> 'AIFlow':
+    def show_context_of(self, label: str = "latest") -> "AIFlow":
         """
         Show the context for a specified label.
 
@@ -355,7 +361,7 @@ class AIFlow:
         print(self.context_map[label])
         return self
 
-    def show_context_keys(self) -> 'AIFlow':
+    def show_context_keys(self) -> "AIFlow":
         """
         Show all context keys.
 
@@ -374,7 +380,7 @@ class AIFlow:
         """
         return self.context_map.keys()
 
-    def load_to_context(self, filename: str, label: str = "latest_file") -> 'AIFlow':
+    def load_to_context(self, filename: str, label: str = "latest_file") -> "AIFlow":
         """
         Load content from a file into the context.
 
@@ -392,7 +398,9 @@ class AIFlow:
             logging.error(f"An error occurred: {e}")
         return self
 
-    def dump_context_to_file(self, label: str = "latest", filename: str = "") -> 'AIFlow':
+    def dump_context_to_file(
+        self, label: str = "latest", filename: str = ""
+    ) -> "AIFlow":
         """
         Dump the context to a file.
 
@@ -415,7 +423,7 @@ class AIFlow:
 
         return self
 
-    def dump_context_to_files(self) -> 'AIFlow':
+    def dump_context_to_files(self) -> "AIFlow":
         """
         Dump all contexts to files.
 
@@ -425,7 +433,7 @@ class AIFlow:
             self.dump_context_to_file(label=key)
         return self
 
-    def dump_context_to_markdown(self, output_filename: str = "content.md") -> 'AIFlow':
+    def dump_context_to_markdown(self, output_filename: str = "content.md") -> "AIFlow":
         """
         Dump the context to a markdown file.
 
@@ -439,10 +447,7 @@ class AIFlow:
         return self
 
     def generate_heading_for_context(
-        self, 
-        label: str, 
-        prompt: str, 
-        replace: bool
+        self, label: str, prompt: str, replace: bool
     ) -> None:
         """
         Generate a heading for a single context.
@@ -468,11 +473,11 @@ class AIFlow:
                 self.save_state()
 
     def generate_headings_for_contexts(
-        self, 
-        labels: List[str] = [], 
-        prompt: str = "Generate a short 10 word summary of the following content:\n", 
-        replace: bool = True
-    ) -> 'AIFlow':
+        self,
+        labels: List[str] = [],
+        prompt: str = "Generate a short 10 word summary of the following content:\n",
+        replace: bool = True,
+    ) -> "AIFlow":
         """
         Generate headings for multiple contexts.
 
@@ -485,7 +490,9 @@ class AIFlow:
             self.generate_heading_for_context(label, prompt, replace)
         return self
 
-    def save_context_to_docx(self, output_filename: str, chapters_to_include: List[str] = []) -> 'AIFlow':
+    def save_context_to_docx(
+        self, output_filename: str, chapters_to_include: List[str] = []
+    ) -> "AIFlow":
         """
         Save the context to a DOCX file.
 
@@ -610,7 +617,7 @@ class AIFlow:
         n: int = 1,
         label: str = "latest_image",
         html: bool = False,
-    ) -> 'AIFlow':
+    ) -> "AIFlow":
         """
         Generate an image.
 
@@ -636,7 +643,9 @@ class AIFlow:
         )
 
         image_data = response.data[0]
-        self.images_map[label] = image_data.url if response_format == "url" else image_data.b64_json
+        self.images_map[label] = (
+            image_data.url if response_format == "url" else image_data.b64_json
+        )
         self.images_map["latest_image"] = self.images_map[label]
 
         self.context_map["latest_image_prompt"] = prompt
@@ -647,7 +656,9 @@ class AIFlow:
 
         return self
 
-    def save_image_to_file(self, label: str = "latest_image", filename: str = "") -> 'AIFlow':
+    def save_image_to_file(
+        self, label: str = "latest_image", filename: str = ""
+    ) -> "AIFlow":
         """
         Save the generated image to a file.
 
