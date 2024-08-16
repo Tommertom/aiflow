@@ -142,7 +142,12 @@ class AIFlow:
     #
     # Chat methods
     #
-    def pretty_print_messages(self):
+    def pretty_print_messages(self) -> "AIFlow":
+        """
+        Pretty print chat messages.
+
+        :return: self
+        """
         for message in self.chat_messages:
             role = message["role"]
             content = message["content"]
