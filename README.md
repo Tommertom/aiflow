@@ -67,20 +67,20 @@ The code has been optimized using the Aider tool.
 - `save_context_to_html(self, output_filename, chapters_to_include=[])`: Save the context to an HTML file.
 
 ### Image Generation
-- `create_image(self, model="dall-e-2", style="vivid", response_format="url", prompt="A white siamese cat", size="1024x1024", quality="standard", n=1, label="latest_image", html=False)`: Generate an image.
+- `generate_image(self, model="dall-e-2", style="vivid", response_format="url", prompt="A white siamese cat", size="1024x1024", quality="standard", n=1, label="latest_image", html=False)`: Generate an image.
 - `save_image_to_file(self, label="latest_image", filename="")`: Save the generated image to a file.
 
 ### Image Analysis
 - `analyze_image(self, image="", prompt="What's in this image?", model="gpt-4o", label="latest", detail="low", max_tokens=300)`: Analyze an image.
 
 ### Speech Generation
-- `create_speech(self, model="tts-1", voice="alloy", response_format="mp3", prompt="A white siamese cat", speed=1, filename="", label="latest_speech", html=False)`: Generate speech from text.
+- `generate_speech(self, model="tts-1", voice="alloy", response_format="mp3", prompt="A white siamese cat", speed=1, filename="", label="latest_speech", html=False)`: Generate speech from text.
 
 ### Audio Transcription
-- `create_transcription(self, filename="", model="whisper-1", language="en", prompt="", response_format="text", temperature=0, label="latest")`: Transcribe audio to text.
+- `transcribe_audio(self, filename="", model="whisper-1", language="en", prompt="", response_format="text", temperature=0, label="latest")`: Transcribe audio to text.
 
 ### Moderation
-- `create_moderation(self, prompt="", label="latest_moderation")`: Create a moderation for a given prompt.
+- `moderate_content(self, prompt="", label="latest_moderation")`: Create a moderation for a given prompt.
 
 ### State Management
 - `save_internal_state(self, filename="")`: Save the internal state to a file.
