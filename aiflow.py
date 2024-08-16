@@ -1,5 +1,6 @@
 # aiflow.py
 import json
+import logging
 from openai import OpenAI
 from typing import Optional, Callable, List, Dict
 from IPython.display import HTML
@@ -9,6 +10,9 @@ from pathlib import Path
 import os
 from IPython.display import Markdown, display
 import markdown
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 # chroma helper that converts a query result to a string, so we can use it in the class
@@ -81,9 +85,9 @@ class AIFlow:
         return self
 
     def show_model_config(self):
-        print(f"Model: {self.model}")
-        print(f"Max Tokens: {self.max_tokens}")
-        print(f"Temperature: {self.temperature}")
+        logging.info(f"Model: {self.model}")
+        logging.info(f"Max Tokens: {self.max_tokens}")
+        logging.info(f"Temperature: {self.temperature}")
         return self
 
     def get_token_usage(self):
@@ -112,14 +116,14 @@ class AIFlow:
     # Some debugging tools
     #
     def show_self_data(self):
-        print("Chat Messages:")
-        print(json.dumps(self.chat_messages, indent=4))
-        print("\nContext Map:")
-        print(json.dumps(self.context_map, indent=4))
-        print("\nImages Map:")
-        print(json.dumps(self.images_map, indent=4))
-        print("\nAudio Map:")
-        print(json.dumps(self.audio_map, indent=4))
+        logging.info("Chat Messages:")
+        logging.info(json.dumps(self.chat_messages, indent=4))
+        logging.info("\nContext Map:")
+        logging.info(json.dumps(self.context_map, indent=4))
+        logging.info("\nImages Map:")
+        logging.info(json.dumps(self.images_map, indent=4))
+        logging.info("\nAudio Map:")
+        logging.info(json.dumps(self.audio_map, indent=4))
         return self
 
     def clear_self_data(self):
@@ -165,8 +169,7 @@ class AIFlow:
         ]
 
         if self.verbose:
-            print(prompt)
-            print()
+            logging.info(prompt)
 
         if self.save_state_per_step:
             self.save_state()
@@ -193,8 +196,7 @@ class AIFlow:
         self.context_map[label] = response
 
         if self.verbose:
-            print(response)
-            print()
+            logging.info(response)
 
         if self.save_state_per_step:
             self.save_state()
@@ -385,9 +387,9 @@ class AIFlow:
                 content = file.read()
                 self.context_map[label] = content
         except FileNotFoundError:
-            print(f"The file {filename} does not exist.")
+            logging.error(f"The file {filename} does not exist.")
         except Exception as e:
-            print(f"An error occurred: {e}")
+            logging.error(f"An error occurred: {e}")
         return self
 
     def dump_context_to_file(self, label: str = "latest", filename: str = "") -> 'AIFlow':
@@ -561,7 +563,7 @@ class AIFlow:
     #
     def save_internal_state(self, filename=""):
         if filename == "" and self.latest_state_filename == "":
-            print("Error - no state filename provided")
+            logging.error("Error - no state filename provided")
             return self
 
         if filename == "":
@@ -583,7 +585,7 @@ class AIFlow:
                 state = json.load(f)
             self.__dict__.update(state)
         except FileNotFoundError:
-            print(f"File '{filename}' not found.")
+            logging.error(f"File '{filename}' not found.")
         return self
 
     #
@@ -642,7 +644,7 @@ class AIFlow:
                 output_filename += ".jpg"
 
         if self.verbose:
-            print("Saving ", label, output_filename)
+            logging.info(f"Saving {label} to {output_filename}")
 
         # Check if the label exists in context_map before retrieving the image
         if label in self.images_map:
