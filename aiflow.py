@@ -1,6 +1,7 @@
 # aiflow.py
 import json
 from openai import OpenAI
+from typing import Optional, Callable, List, Dict
 from IPython.display import HTML
 from docx import Document
 import urllib.request
