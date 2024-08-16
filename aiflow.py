@@ -156,7 +156,14 @@ class AIFlow:
             print()
         return self
 
-    def pretty_print_messages_to_file(self, file_name="output.txt", html=True):
+    def pretty_print_messages_to_file(self, file_name: str = "output.txt", html: bool = True) -> "AIFlow":
+        """
+        Pretty print chat messages to a file.
+
+        :param file_name: Name of the file to save the messages
+        :param html: Whether to return HTML for downloading the file
+        :return: self
+        """
         with open(file_name, "w") as file:
             for message in self.chat_messages:
                 role = message["role"]
