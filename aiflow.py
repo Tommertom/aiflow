@@ -343,7 +343,7 @@ class AIFlow:
                 file.write(f"{content}\n\n")
         return self
 
-    def generate_headings_for_context(
+    def generate_headings_for_contexts(
         self,
         labels=[],
         prompt="Generate a short 10 word summary of the following content:\n",
@@ -540,7 +540,7 @@ class AIFlow:
     # 1024x1024 512x512
     # https://platform.openai.com/docs/api-reference/images/create
     #
-    def generate_image(
+    def create_image(
         self,
         model="dall-e-2",
         style="vivid",
@@ -602,7 +602,7 @@ class AIFlow:
     # Vision model
     # https://platform.openai.com/docs/guides/vision
     #
-    def interpret_image(
+    def analyze_image(
         self,
         image="",
         prompt="What's in this image?",
@@ -646,7 +646,7 @@ class AIFlow:
     # MP3 generation
     # https://platform.openai.com/docs/api-reference/audio/createSpeech
     #
-    def generate_speech(
+    def create_speech(
         self,
         model="tts-1",
         voice="alloy",
@@ -687,7 +687,7 @@ class AIFlow:
 
     # Sound transcription
     # https://platform.openai.com/docs/api-reference/audio/createTranscription
-    def generate_transcription(
+    def create_transcription(
         self,
         filename="",
         model="whisper-1",
