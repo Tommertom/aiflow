@@ -91,6 +91,8 @@ class AIFlow:
         """
         self.temperature = temperature
         return self
+        self.temperature = temperature
+        return self
 
     def set_model(self, model: Union[Model, str] = Model.GPT_4) -> "AIFlow":
         """
@@ -346,24 +348,15 @@ class AIFlow:
     # Simple completion
     #
     def generate_completion(self, prompt: str, label: str = "latest") -> "AIFlow":
-        """
-        Get a completion for a given prompt.
-
-        :param prompt: Prompt for completion
-        :param label: Label for the context
-        :return: self
-        """
         if self.verbose:
             print(prompt)
             print()
 
         prompt = self.replace_tags_with_content(prompt)
-
         self.context_map["latest_prompt"] = prompt
         messages = [{"role": "user", "content": prompt}]
         response = self.call_openai_chat_api(messages=messages)
-        self.context_map["latest"] = response
-        self.context_map[label] = response
+        self._update_context(response, label)
 
         if self.verbose:
             print(response)
@@ -373,6 +366,10 @@ class AIFlow:
             self.save_state()
 
         return self
+
+    def _update_context(self, response: str, label: str) -> None:
+        self.context_map["latest"] = response
+        self.context_map[label] = response
 
     #
     # OpenAI caller
@@ -397,13 +394,14 @@ class AIFlow:
 
         try:
             completion = self.client.chat.completions.create(**params)
-
-            # increase the tokens using completion.usage
             self.add_token_usage(completion.usage)
-
             return completion.choices[0].message.content
+        except OpenAIError as e:
+            logging.error(f"OpenAI API error: {e}")
+            return "An error occurred with the OpenAI API."
         except Exception as e:
-            return str(e)
+            logging.error(f"Unexpected error: {e}")
+            return "An unexpected error occurred."
 
     #
     # Completing context in prompts
@@ -801,20 +799,7 @@ class AIFlow:
         :param html: Whether to return HTML for displaying the image
         :return: self
         """
-        """
-        Generate an image.
-
-        :param model: Model to use for image generation
-        :param style: Style of the image
-        :param response_format: Format of the response (url or b64_json)
-        :param prompt: Prompt for image generation
-        :param size: Size of the image
-        :param quality: Quality of the image
-        :param n: Number of images to generate
-        :param label: Label for the generated image
-        :param html: Whether to return HTML for displaying the image
-        :return: self
-        """
+        logging.info(f"Generating image with prompt: {prompt}")
         response = self.client.images.generate(
             model=model,
             prompt=prompt,
