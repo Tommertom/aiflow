@@ -556,24 +556,53 @@ class AIFlow:
     def get_latest_context_as_text(self):
         return self.context_map["latest"]
 
-    def get_context_as_text(self, label="latest"):
+    def get_context_as_text(self, label: str = "latest") -> str:
+        """
+        Get the context as text for a specified label.
+
+        :param label: Label for the context
+        :return: Context as text
+        """
         return self.context_map[label]
 
-    def get_reduced_chat_messages_as_text(self, func):
+    def get_reduced_chat_messages_as_text(self, func: Optional[Callable[[List[Dict[str, str]]], str]]) -> str:
+        """
+        Get reduced chat messages as text using a function.
+
+        :param func: Function to reduce messages
+        :return: Reduced chat messages as text
+        """
         if func is not None:
             return func(self.chat_messages)
         return self
 
-    def display_latest_context_as_markdown(self):
+    def display_latest_context_as_markdown(self) -> None:
+        """
+        Display the latest context as markdown.
+
+        :return: None
+        """
         return display(Markdown(self.context_map["latest"]))
 
-    def display_context_as_markdown(self, label="latest"):
+    def display_context_as_markdown(self, label: str = "latest") -> None:
+        """
+        Display the context as markdown for a specified label.
+
+        :param label: Label for the context
+        :return: None
+        """
         return display(Markdown(self.context_map[label]))
 
     #
     # Saving state
     #
-    def save_internal_state(self, filename=""):
+    def save_internal_state(self, filename: str = "") -> "AIFlow":
+        """
+        Save the internal state to a file.
+
+        :param filename: Name of the file to save the state
+        :return: self
+        """
         if filename == "" and self.latest_state_filename == "":
             logging.error("Error - no state filename provided")
             return self
@@ -590,7 +619,13 @@ class AIFlow:
 
         return self
 
-    def load_internal_state(self, filename="state.json"):
+    def load_internal_state(self, filename: str = "state.json") -> "AIFlow":
+        """
+        Load the internal state from a file.
+
+        :param filename: Name of the file to load the state from
+        :return: self
+        """
         self.latest_state_filename = filename
         try:
             with open(filename, "r") as f:
@@ -606,18 +641,21 @@ class AIFlow:
     # 1024x1024 512x512
     # https://platform.openai.com/docs/api-reference/images/create
     #
-    def create_image(
-        self,
-        model: str = "dall-e-2",
-        style: str = "vivid",
-        response_format: str = "url",
-        prompt: str = "A white siamese cat",
-        size: str = "1024x1024",
-        quality: str = "standard",
-        n: int = 1,
-        label: str = "latest_image",
-        html: bool = False,
-    ) -> "AIFlow":
+    def create_image(self, model: str = "dall-e-2", style: str = "vivid", response_format: str = "url", prompt: str = "A white siamese cat", size: str = "1024x1024", quality: str = "standard", n: int = 1, label: str = "latest_image", html: bool = False) -> "AIFlow":
+        """
+        Generate an image.
+
+        :param model: Model to use for image generation
+        :param style: Style of the image
+        :param response_format: Format of the response (url or b64_json)
+        :param prompt: Prompt for image generation
+        :param size: Size of the image
+        :param quality: Quality of the image
+        :param n: Number of images to generate
+        :param label: Label for the generated image
+        :param html: Whether to return HTML for displaying the image
+        :return: self
+        """
         """
         Generate an image.
 
@@ -656,9 +694,14 @@ class AIFlow:
 
         return self
 
-    def save_image_to_file(
-        self, label: str = "latest_image", filename: str = ""
-    ) -> "AIFlow":
+    def save_image_to_file(self, label: str = "latest_image", filename: str = "") -> "AIFlow":
+        """
+        Save the generated image to a file.
+
+        :param label: Label for the generated image
+        :param filename: Name of the file to save the image
+        :return: self
+        """
         """
         Save the generated image to a file.
 
@@ -682,15 +725,18 @@ class AIFlow:
     # Vision model
     # https://platform.openai.com/docs/guides/vision
     #
-    def analyze_image(
-        self,
-        image="",
-        prompt="What's in this image?",
-        model="gpt-4o",
-        label="latest",
-        detail="low",
-        max_tokens=300,
-    ):
+    def analyze_image(self, image: str = "", prompt: str = "What's in this image?", model: str = "gpt-4o", label: str = "latest", detail: str = "low", max_tokens: int = 300) -> "AIFlow":
+        """
+        Analyze an image.
+
+        :param image: URL of the image
+        :param prompt: Prompt for image analysis
+        :param model: Model to use for analysis
+        :param label: Label for the context
+        :param detail: Detail level of the analysis
+        :param max_tokens: Maximum tokens for the response
+        :return: self
+        """
         if image == "":
             return self
 
@@ -726,17 +772,20 @@ class AIFlow:
     # MP3 generation
     # https://platform.openai.com/docs/api-reference/audio/createSpeech
     #
-    def create_speech(
-        self,
-        model="tts-1",
-        voice="alloy",
-        response_format="mp3",
-        prompt="A white siamese cat",
-        speed=1,
-        filename="",
-        label="latest_speech",
-        html=False,
-    ):
+    def create_speech(self, model: str = "tts-1", voice: str = "alloy", response_format: str = "mp3", prompt: str = "A white siamese cat", speed: int = 1, filename: str = "", label: str = "latest_speech", html: bool = False) -> "AIFlow":
+        """
+        Generate speech from text.
+
+        :param model: Model to use for speech generation
+        :param voice: Voice to use
+        :param response_format: Format of the response (mp3 or other)
+        :param prompt: Prompt for speech generation
+        :param speed: Speed of the speech
+        :param filename: Name of the file to save the speech
+        :param label: Label for the generated speech
+        :param html: Whether to return HTML for downloading the speech
+        :return: self
+        """
         if filename == "":
             filename = label + ".mp3"
 
@@ -767,16 +816,19 @@ class AIFlow:
 
     # Sound transcription
     # https://platform.openai.com/docs/api-reference/audio/createTranscription
-    def create_transcription(
-        self,
-        filename="",
-        model="whisper-1",
-        language="en",
-        prompt="",
-        response_format="text",
-        temperature=0,
-        label="latest",
-    ):
+    def create_transcription(self, filename: str = "", model: str = "whisper-1", language: str = "en", prompt: str = "", response_format: str = "text", temperature: int = 0, label: str = "latest") -> "AIFlow":
+        """
+        Transcribe audio to text.
+
+        :param filename: Name of the audio file
+        :param model: Model to use for transcription
+        :param language: Language of the audio
+        :param prompt: Prompt for transcription
+        :param response_format: Format of the response (text or other)
+        :param temperature: Temperature for the model
+        :param label: Label for the context
+        :return: self
+        """
         if filename == "":
             return self
 
@@ -800,7 +852,14 @@ class AIFlow:
     # Moderation
     # https://platform.openai.com/docs/guides/moderation/overview
     #
-    def create_moderation(self, prompt="", label="latest_moderation"):
+    def create_moderation(self, prompt: str = "", label: str = "latest_moderation") -> "AIFlow":
+        """
+        Create a moderation request.
+
+        :param prompt: Prompt for moderation
+        :param label: Label for the context
+        :return: self
+        """
         if prompt == "":
             return self
 
@@ -814,7 +873,13 @@ class AIFlow:
 
         return self
 
-    def update_token_usage(self, usage):
+    def update_token_usage(self, usage: Dict[str, int]) -> None:
+        """
+        Update the token usage statistics.
+
+        :param usage: Dictionary with token usage
+        :return: None
+        """
         # increase the tokens using completion.usage
         self.completion_tokens += usage.completion_tokens
         self.prompt_tokens += usage.prompt_tokens
