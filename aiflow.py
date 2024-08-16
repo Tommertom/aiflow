@@ -169,7 +169,7 @@ class AIFlow:
     #
     # Some debugging tools
     #
-    def show_self_data(self) -> "AIFlow":
+    def display_internal_data(self) -> "AIFlow":
         """
         Display internal data for debugging.
 
@@ -185,7 +185,7 @@ class AIFlow:
         logging.info(json.dumps(self.audio_map, indent=4))
         return self
 
-    def clear_self_data(self) -> "AIFlow":
+    def clear_internal_data(self) -> "AIFlow":
         """
         Clear internal data.
 
@@ -198,7 +198,7 @@ class AIFlow:
         return self
 
     # function to run another function that may return something or nothing - this to support running code in the chain
-    def run(self, func: Callable[[], str] = lambda: "", label: str = "") -> "AIFlow":
+    def execute_function(self, func: Callable[[], str] = lambda: "", label: str = "") -> "AIFlow":
         """
         Run a function that may return something or nothing.
 
@@ -327,7 +327,7 @@ class AIFlow:
     #
     # Simple completion
     #
-    def completion(self, prompt: str, label: str = "latest") -> "AIFlow":
+    def generate_completion(self, prompt: str, label: str = "latest") -> "AIFlow":
         """
         Get a completion for a given prompt.
 
@@ -755,7 +755,7 @@ class AIFlow:
     # 1024x1024 512x512
     # https://platform.openai.com/docs/api-reference/images/create
     #
-    def create_image(
+    def generate_image(
         self,
         model: str = "dall-e-2",
         style: str = "vivid",
@@ -907,7 +907,7 @@ class AIFlow:
     # MP3 generation
     # https://platform.openai.com/docs/api-reference/audio/createSpeech
     #
-    def create_speech(
+    def generate_speech(
         self,
         model: str = "tts-1",
         voice: str = "alloy",
@@ -961,7 +961,7 @@ class AIFlow:
 
     # Sound transcription
     # https://platform.openai.com/docs/api-reference/audio/createTranscription
-    def create_transcription(
+    def transcribe_audio(
         self,
         filename: str = "",
         model: str = "whisper-1",
@@ -1006,7 +1006,7 @@ class AIFlow:
     # Moderation
     # https://platform.openai.com/docs/guides/moderation/overview
     #
-    def create_moderation(
+    def moderate_content(
         self, prompt: str = "", label: str = "latest_moderation"
     ) -> "AIFlow":
         """
