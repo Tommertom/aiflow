@@ -401,54 +401,6 @@ class AIFlow:
 
         return self
 
-    # def dump_context_to_html(self, output_filename, chapters_to_include=[]):
-    #     html_content = "<html><body>"
-
-    #     for chapter, content in self.context_map.items():
-    #         if chapter in chapters_to_include or chapters_to_include == []:
-    #             heading_key = chapter + "_heading"
-    #             if heading_key in self.context_map:
-    #                 heading = self.context_map[heading_key]
-    #             else:
-    #                 heading = chapter
-
-    #             html_content += f"<h1>{heading}</h1>"
-    #             html_content += markdown.markdown(str(content))
-
-    #     html_content += "</body></html>"
-
-    #     # Ensure the directory exists
-    #     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
-
-    #     with open(output_filename, "w", encoding="utf-8") as f:
-    #         f.write(html_content)
-
-    #     return self
-
-    # def dump_context_to_html(self, output_filename, chapters_to_include=[]):
-    #     html_content = "<html><body>"
-
-    #     for chapter, content in self.context_map.items():
-    #         if chapter in chapters_to_include or chapters_to_include == []:
-    #             heading_key = chapter + "_heading"
-    #             if heading_key in self.context_map:
-    #                 heading = self.context_map[heading_key]
-    #             else:
-    #                 heading = chapter
-
-    #             html_content += f"<h1>{heading}</h1>"
-    #             html_content += markdown.markdown(str(content))
-
-    #     html_content += "</body></html>"
-
-    #     # Ensure the directory exists
-    #     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
-
-    #     with open(output_filename, "w", encoding="utf-8") as f:
-    #         f.write(html_content)
-
-    #     return self
-
     def save_context_to_html(self, output_filename, chapters_to_include=[]):
         html_content = "<html><body>"
 
