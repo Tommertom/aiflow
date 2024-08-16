@@ -34,8 +34,8 @@ The code has been optimized using the Aider tool.
 - `set_step_save(self, step=False)`: Enable or disable saving state per step.
 
 ### Debugging Tools
-- `show_self_data(self)`: Display internal data for debugging.
-- `clear_self_data(self)`: Clear internal data.
+- `display_internal_data(self)`: Display internal data for debugging.
+- `clear_internal_data(self)`: Clear internal data.
 
 ### Chat Methods
 - `pretty_print_messages(self)`: Pretty print chat messages.
@@ -46,7 +46,7 @@ The code has been optimized using the Aider tool.
 - `reduce_messages_to_text(self, func)`: Reduce chat messages to text using a function.
 
 ### Completion Methods
-- `completion(self, prompt, label="latest")`: Get a completion for a given prompt.
+- `generate_completion(self, prompt, label="latest")`: Get a completion for a given prompt.
 
 ### Context Management
 - `replace_tags_with_content(self, input_string="")`: Replace tags in the input string with context content.
@@ -92,4 +92,4 @@ The code has been optimized using the Aider tool.
 - `get_reduced_chat_messages_as_text(self, func)`: Get reduced chat messages as text using a function.
 - `display_latest_context_as_markdown(self)`: Display the latest context as markdown.
 - `display_context_as_markdown(self, label="latest")`: Display the context as markdown for a specified label.
-- `run(self, func=lambda: "", label="")`: Run a function that may return something or nothing.
+- `execute_function(self, func=lambda: "", label="")`: Run a function that may return something or nothing.
