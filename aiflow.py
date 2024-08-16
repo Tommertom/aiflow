@@ -2,7 +2,8 @@
 import json
 import logging
 from openai import OpenAI
-from typing import Optional, Callable, List, Dict
+from typing import Optional, Callable, List, Dict, Union
+from enum import Enum
 from IPython.display import HTML
 from docx import Document
 import urllib.request
@@ -47,11 +48,22 @@ def chroma_query_to_list(result):
     return result_list
 
 
-# models - gpt-4, gpt-4o, gpt-3.5-turbo
+class Model(Enum):
+    GPT_4 = "gpt-4"
+    GPT_4O = "gpt-4o"
+    GPT_4O_MINI = "gpt-4o-mini"
+
+
 class AIFlow:
-    def __init__(self, api_key, model="gpt-4", temperature=0, max_tokens=150):
+    def __init__(
+        self,
+        api_key,
+        model: Union[Model, str] = Model.GPT_4,
+        temperature=0,
+        max_tokens=150,
+    ):
         self.client = OpenAI(api_key=api_key)
-        self.model = model
+        self.model = Model(model) if isinstance(model, str) else model
         self.max_tokens = max_tokens
         self.temperature = temperature
         self.json_mode = False
@@ -80,14 +92,14 @@ class AIFlow:
         self.temperature = temperature
         return self
 
-    def set_model(self, model: str = "gpt-4") -> "AIFlow":
+    def set_model(self, model: Union[Model, str] = Model.GPT_4) -> "AIFlow":
         """
         Set the model to be used.
 
         :param model: Model name
         :return: self
         """
-        self.model = model
+        self.model = Model(model) if isinstance(model, str) else model
         return self
 
     def set_max_tokens(self, max_tokens: int = 150) -> "AIFlow":
@@ -198,7 +210,9 @@ class AIFlow:
         return self
 
     # function to run another function that may return something or nothing - this to support running code in the chain
-    def execute_function(self, func: Callable[[], str] = lambda: "", label: str = "") -> "AIFlow":
+    def execute_function(
+        self, func: Callable[[], str] = lambda: "", label: str = ""
+    ) -> "AIFlow":
         """
         Run a function that may return something or nothing.
 
@@ -225,7 +239,9 @@ class AIFlow:
             print()
         return self
 
-    def pretty_print_messages_to_file(self, file_name: str = "output.txt", html: bool = True) -> "AIFlow":
+    def pretty_print_messages_to_file(
+        self, file_name: str = "output.txt", html: bool = True
+    ) -> "AIFlow":
         """
         Pretty print chat messages to a file.
 
@@ -299,7 +315,9 @@ class AIFlow:
 
         return self
 
-    def filter_messages(self, func: Optional[Callable[[List[Dict[str, str]]], List[Dict[str, str]]]]) -> "AIFlow":
+    def filter_messages(
+        self, func: Optional[Callable[[List[Dict[str, str]]], List[Dict[str, str]]]]
+    ) -> "AIFlow":
         """
         Filter chat messages using a function.
 
@@ -615,7 +633,9 @@ class AIFlow:
 
         return self
 
-    def save_context_to_html(self, output_filename: str, chapters_to_include: List[str] = []) -> "AIFlow":
+    def save_context_to_html(
+        self, output_filename: str, chapters_to_include: List[str] = []
+    ) -> "AIFlow":
         """
         Save the context to an HTML file.
 

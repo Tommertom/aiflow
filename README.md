@@ -18,11 +18,11 @@ The code has been optimized using the Aider tool.
 ## AIFlow Class
 
 ### Initialization
-- `__init__(self, api_key, model="gpt-4", temperature=0, max_tokens=150)`: Initialize the AIFlow class with API key, model, temperature, and max tokens.
+- `__init__(self, api_key, model=Model.GPT_4, temperature=0, max_tokens=150)`: Initialize the AIFlow class with API key, model, temperature, and max tokens.
 
 ### Model Configuration
 - `set_temperature(self, temperature=0)`: Set the temperature for the model.
-- `set_model(self, model="gpt-4")`: Set the model to be used.
+- `set_model(self, model=Model.GPT_4)`: Set the model to be used.
 - `set_max_tokens(self, max_tokens=150)`: Set the maximum number of tokens.
 - `set_json_output(self, json_mode=False)`: Set the output format to JSON.
 - `show_model_config(self)`: Display the current model configuration.
