@@ -205,7 +205,13 @@ class AIFlow:
             self.chat_messages = func(self.chat_messages)
         return self
 
-    def reduce_messages_to_text(self, func):
+    def reduce_messages_to_text(self, func: Optional[Callable[[List[Dict[str, str]]], str]]) -> 'AIFlow':
+        """
+        Reduce chat messages to text using a function.
+
+        :param func: Function to reduce messages
+        :return: self
+        """
         if func is not None:
             self.context_map["latest"] = func(self.chat_messages)
             print(self.context_map["latest"])
@@ -214,7 +220,14 @@ class AIFlow:
     #
     # Simple completion
     #
-    def completion(self, prompt, label="latest"):
+    def completion(self, prompt: str, label: str = "latest") -> 'AIFlow':
+        """
+        Get a completion for a given prompt.
+
+        :param prompt: Prompt for completion
+        :param label: Label for the context
+        :return: self
+        """
         if self.verbose:
             print(prompt)
             print()
@@ -239,7 +252,13 @@ class AIFlow:
     #
     # OpenAI caller
     #
-    def call_openai_chat_api(self, messages=[]):
+    def call_openai_chat_api(self, messages: List[Dict[str, str]] = []) -> str:
+        """
+        Call the OpenAI chat API with the given messages.
+
+        :param messages: List of messages
+        :return: Response from the API
+        """
         params = {
             "model": self.model,
             "max_tokens": self.max_tokens,
@@ -264,7 +283,13 @@ class AIFlow:
     #
     # Completing context in prompts
     #
-    def replace_tags_with_content(self, input_string=""):
+    def replace_tags_with_content(self, input_string: str = "") -> str:
+        """
+        Replace tags in the input string with context content.
+
+        :param input_string: Input string with tags
+        :return: String with tags replaced by context content
+        """
         for key, value in self.context_map.items():
             input_string = input_string.replace(f"[{key}]", str(value))
         return input_string
@@ -272,39 +297,88 @@ class AIFlow:
     #
     # Context functions
     #
-    def copy_latest_to(self, label="latest"):
+    def copy_latest_to(self, label: str = "latest") -> 'AIFlow':
+        """
+        Copy the latest context to a specified label.
+
+        :param label: Label for the context
+        :return: self
+        """
         self.context_map[label] = self.context_map["latest"]
         return self
 
-    def transform_context(self, label="latest", func=lambda x: x):
+    def transform_context(self, label: str = "latest", func: Callable[[str], str] = lambda x: x) -> 'AIFlow':
+        """
+        Transform the context using a function.
+
+        :param label: Label for the context
+        :param func: Function to transform the context
+        :return: self
+        """
         if label != "latest" and label in self.context_map and func is not None:
             self.context_map[label] = func(self.context_map[label])
         return self
 
-    def set_context_of(self, content="", label="latest"):
+    def set_context_of(self, content: str = "", label: str = "latest") -> 'AIFlow':
+        """
+        Set the context for a specified label.
+
+        :param content: Content to set
+        :param label: Label for the context
+        :return: self
+        """
         if label != "latest":
             self.context_map[label] = content
         return self
 
-    def delete_context(self, label="latest"):
+    def delete_context(self, label: str = "latest") -> 'AIFlow':
+        """
+        Delete the context for a specified label.
+
+        :param label: Label for the context
+        :return: self
+        """
         if label != "latest" and label in self.context_map:
             del self.context_map[label]
         return self
 
-    def show_context_of(self, label="latest"):
+    def show_context_of(self, label: str = "latest") -> 'AIFlow':
+        """
+        Show the context for a specified label.
+
+        :param label: Label for the context
+        :return: self
+        """
         print(self.context_map[label])
         return self
 
-    def show_context_keys(self):
+    def show_context_keys(self) -> 'AIFlow':
+        """
+        Show all context keys.
+
+        :return: self
+        """
         keys_list = list(self.context_map.keys())
         keys_str = ", ".join(keys_list)
         print(keys_str)
         return self
 
-    def return_context_keys(self):
+    def return_context_keys(self) -> List[str]:
+        """
+        Return all context keys.
+
+        :return: List of context keys
+        """
         return self.context_map.keys()
 
-    def load_to_context(self, filename, label="latest_file"):
+    def load_to_context(self, filename: str, label: str = "latest_file") -> 'AIFlow':
+        """
+        Load content from a file into the context.
+
+        :param filename: Name of the file to load content from
+        :param label: Label for the context
+        :return: self
+        """
         try:
             with open(filename, "r") as file:
                 content = file.read()
@@ -315,7 +389,14 @@ class AIFlow:
             print(f"An error occurred: {e}")
         return self
 
-    def dump_context_to_file(self, label="latest", filename=""):
+    def dump_context_to_file(self, label: str = "latest", filename: str = "") -> 'AIFlow':
+        """
+        Dump the context to a file.
+
+        :param label: Label for the context
+        :param filename: Name of the file to dump content to
+        :return: self
+        """
         if self.default_folder_for_output != "":
             filename_2 = os.path.join(
                 self.default_folder_for_output, f"context_{label}.txt"
@@ -331,12 +412,23 @@ class AIFlow:
 
         return self
 
-    def dump_context_to_files(self):
+    def dump_context_to_files(self) -> 'AIFlow':
+        """
+        Dump all contexts to files.
+
+        :return: self
+        """
         for key, value in self.context_map.items():
             self.dump_context_to_file(label=key)
         return self
 
-    def dump_context_to_markdown(self, output_filename="content.md"):
+    def dump_context_to_markdown(self, output_filename: str = "content.md") -> 'AIFlow':
+        """
+        Dump the context to a markdown file.
+
+        :param output_filename: Name of the markdown file
+        :return: self
+        """
         with open(output_filename, "w") as file:
             for chapter, content in self.context_map.items():
                 file.write(f"# {chapter}\n\n")
@@ -344,10 +436,10 @@ class AIFlow:
         return self
 
     def generate_headings_for_contexts(
-        self,
-        labels=[],
-        prompt="Generate a short 10 word summary of the following content:\n",
-        replace=True,
+        self, 
+        labels: List[str] = [], 
+        prompt: str = "Generate a short 10 word summary of the following content:\n", 
+        replace: bool = True
     ):
         # iterate through all labels and call generate_heading_for_context for each label
         for label in labels:
@@ -358,10 +450,10 @@ class AIFlow:
         return self
 
     def generate_heading_for_context(
-        self,
-        label="latest",
-        prompt="Generate a short 10 word summary of the following content:\n",
-        replace=True,
+        self, 
+        label: str = "latest", 
+        prompt: str = "Generate a short 10 word summary of the following content:\n", 
+        replace: bool = True
     ):
         content = self.context_map.get(label, "")
         if not content:
@@ -385,7 +477,14 @@ class AIFlow:
 
         return self
 
-    def save_context_to_docx(self, output_filename, chapters_to_include=[]):
+    def save_context_to_docx(self, output_filename: str, chapters_to_include: List[str] = []) -> 'AIFlow':
+        """
+        Save the context to a DOCX file.
+
+        :param output_filename: Name of the DOCX file
+        :param chapters_to_include: List of chapters to include
+        :return: self
+        """
         document = Document()
         for chapter, content in self.context_map.items():
             if chapter in chapters_to_include:
