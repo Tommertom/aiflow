@@ -70,29 +70,63 @@ class AIFlow:
         self.save_state_per_step = False
 
     # model configs
-    def set_temperature(self, temperature=0):
+    def set_temperature(self, temperature: int = 0) -> "AIFlow":
+        """
+        Set the temperature for the model.
+
+        :param temperature: Temperature value
+        :return: self
+        """
         self.temperature = temperature
         return self
 
-    def set_model(self, model="gpt-4"):
+    def set_model(self, model: str = "gpt-4") -> "AIFlow":
+        """
+        Set the model to be used.
+
+        :param model: Model name
+        :return: self
+        """
         self.model = model
         return self
 
-    def set_max_tokens(self, max_tokens=150):
+    def set_max_tokens(self, max_tokens: int = 150) -> "AIFlow":
+        """
+        Set the maximum number of tokens.
+
+        :param max_tokens: Maximum tokens value
+        :return: self
+        """
         self.max_tokens = max_tokens
         return self
 
-    def set_json_output(self, json_mode=False):
+    def set_json_output(self, json_mode: bool = False) -> "AIFlow":
+        """
+        Set the output format to JSON.
+
+        :param json_mode: Boolean flag for JSON mode
+        :return: self
+        """
         self.json_mode = json_mode
         return self
 
-    def show_model_config(self):
+    def show_model_config(self) -> "AIFlow":
+        """
+        Display the current model configuration.
+
+        :return: self
+        """
         logging.info(f"Model: {self.model}")
         logging.info(f"Max Tokens: {self.max_tokens}")
         logging.info(f"Temperature: {self.temperature}")
         return self
 
-    def get_token_usage(self):
+    def get_token_usage(self) -> Dict[str, int]:
+        """
+        Get the token usage statistics.
+
+        :return: Dictionary with token usage statistics
+        """
         return {
             "completion_tokens": self.completion_tokens,
             "prompt_tokens": self.prompt_tokens,
@@ -100,24 +134,47 @@ class AIFlow:
         }
 
     # other config
-    def set_output_folder(self, folder=""):
+    def set_output_folder(self, folder: str = "") -> "AIFlow":
+        """
+        Set the default folder for output.
+
+        :param folder: Folder path
+        :return: self
+        """
         self.default_folder_for_output = folder
         if folder != "":
             os.makedirs(self.default_folder_for_output, exist_ok=True)
         return self
 
-    def set_verbose(self, level=True):
+    def set_verbose(self, level: bool = True) -> "AIFlow":
+        """
+        Set the verbosity level.
+
+        :param level: Boolean flag for verbosity
+        :return: self
+        """
         self.verbose = level
         return self
 
-    def set_step_save(self, step=False):
+    def set_step_save(self, step: bool = False) -> "AIFlow":
+        """
+        Enable or disable saving state per step.
+
+        :param step: Boolean flag for step save
+        :return: self
+        """
         self.save_state_per_step = step
         return self
 
     #
     # Some debugging tools
     #
-    def show_self_data(self):
+    def show_self_data(self) -> "AIFlow":
+        """
+        Display internal data for debugging.
+
+        :return: self
+        """
         logging.info("Chat Messages:")
         logging.info(json.dumps(self.chat_messages, indent=4))
         logging.info("\nContext Map:")
@@ -128,7 +185,12 @@ class AIFlow:
         logging.info(json.dumps(self.audio_map, indent=4))
         return self
 
-    def clear_self_data(self):
+    def clear_self_data(self) -> "AIFlow":
+        """
+        Clear internal data.
+
+        :return: self
+        """
         self.chat_messages = []
         self.context_map = {}
         self.images_map = {}
@@ -136,7 +198,14 @@ class AIFlow:
         return self
 
     # function to run another function that may return something or nothing - this to support running code in the chain
-    def run(self, func=lambda: "", label=""):
+    def run(self, func: Callable[[], str] = lambda: "", label: str = "") -> "AIFlow":
+        """
+        Run a function that may return something or nothing.
+
+        :param func: Function to run
+        :param label: Label for the context
+        :return: self
+        """
         return self
 
     #
@@ -176,7 +245,13 @@ class AIFlow:
             )
         return self
 
-    def set_system_prompt(self, prompt=""):
+    def set_system_prompt(self, prompt: str = "") -> "AIFlow":
+        """
+        Set the system prompt.
+
+        :param prompt: System prompt
+        :return: self
+        """
         # Remove existing "system" role message if it exists
         self.chat_messages = [
             msg for msg in self.chat_messages if msg.get("role") != "system"
@@ -194,7 +269,14 @@ class AIFlow:
         self.chat_messages.insert(0, {"role": "system", "content": prompt})
         return self
 
-    def add_user_chat(self, prompt, label="latest"):
+    def add_user_chat(self, prompt: str, label: str = "latest") -> "AIFlow":
+        """
+        Add a user chat message and get a response.
+
+        :param prompt: User chat message
+        :param label: Label for the context
+        :return: self
+        """
         if self.verbose:
             print(prompt)
 
@@ -217,7 +299,13 @@ class AIFlow:
 
         return self
 
-    def filter_messages(self, func):
+    def filter_messages(self, func: Optional[Callable[[List[Dict[str, str]]], List[Dict[str, str]]]]) -> "AIFlow":
+        """
+        Filter chat messages using a function.
+
+        :param func: Function to filter messages
+        :return: self
+        """
         if func is not None:
             self.chat_messages = func(self.chat_messages)
         return self
@@ -527,7 +615,14 @@ class AIFlow:
 
         return self
 
-    def save_context_to_html(self, output_filename, chapters_to_include=[]):
+    def save_context_to_html(self, output_filename: str, chapters_to_include: List[str] = []) -> "AIFlow":
+        """
+        Save the context to an HTML file.
+
+        :param output_filename: Name of the HTML file
+        :param chapters_to_include: List of chapters to include
+        :return: self
+        """
         html_content = "<html><body>"
 
         if chapters_to_include:
@@ -565,7 +660,12 @@ class AIFlow:
     #
     # Functions to support inclusion in other chat instances. Only implemented by returning strings
     #
-    def get_latest_context_as_text(self):
+    def get_latest_context_as_text(self) -> str:
+        """
+        Get the latest context as text.
+
+        :return: Latest context as text
+        """
         return self.context_map["latest"]
 
     def get_context_as_text(self, label: str = "latest") -> str:
@@ -930,6 +1030,12 @@ class AIFlow:
         return self
 
     def update_token_usage(self, usage: Dict[str, int]) -> None:
+        """
+        Update the token usage statistics.
+
+        :param usage: Dictionary with token usage
+        :return: None
+        """
         """
         Update the token usage statistics.
 
