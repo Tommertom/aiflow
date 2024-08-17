@@ -55,15 +55,16 @@ class Model(Enum):
 
 
 class AIFlow:
+
     def __init__(
         self,
         api_key,
-        model: Union[Model, str] = Model.GPT_4,
+        model=Model.GPT_4O_MINI,
         temperature=0,
         max_tokens=150,
     ):
         self.client = OpenAI(api_key=api_key)
-        self.model = Model(model) if isinstance(model, str) else model
+        self.model = model.value
         self.max_tokens = max_tokens
         self.temperature = temperature
         self.json_mode = False
@@ -101,7 +102,7 @@ class AIFlow:
         :param model: Model name
         :return: self
         """
-        self.model = Model(model) if isinstance(model, str) else model
+        self.model = model.value
         return self
 
     def set_max_tokens(self, max_tokens: int = 150) -> "AIFlow":
@@ -178,6 +179,55 @@ class AIFlow:
         :return: self
         """
         self.save_state_per_step = step
+        return self
+
+    #
+    # Saving state
+    #
+
+    def save_internal_state(self, filename: str = "") -> "AIFlow":
+        """
+        Save the internal state to a file.
+
+        :param filename: Name of the file to save the state
+        :return: self
+        """
+        if filename == "" and self.latest_state_filename == "":
+            logging.error("Error - no state filename provided")
+            return self
+
+        if filename == "":
+            filename = self.latest_state_filename
+
+        self.latest_state_filename = filename
+
+        # Create a copy of the current state
+        state_to_save = self.__dict__.copy()
+
+        # Remove objects that cannot be serialized
+        state_to_save.pop("client", None)
+
+        # Save the state to a JSON file
+        with open(filename, "w") as f:
+            json.dump(state_to_save, f, indent=4)
+
+        return self
+
+    def load_internal_state(self, filename: str = "state.json") -> "AIFlow":
+        """
+        Load the internal state from a file.
+
+        :param filename: Name of the file to load the state from
+        :return: self
+        """
+        self.latest_state_filename = filename
+        try:
+            with open(filename, "r") as f:
+                state = json.load(f)
+
+            self.__dict__.update(state)
+        except FileNotFoundError:
+            logging.error(f"File '{filename}' not found.")
         return self
 
     #
@@ -279,7 +329,7 @@ class AIFlow:
             logging.info(prompt)
 
         if self.save_state_per_step:
-            self.save_state()
+            self.save_internal_state()
 
         prompt = self.replace_tags_with_content(prompt)
 
@@ -313,7 +363,7 @@ class AIFlow:
             logging.info(response)
 
         if self.save_state_per_step:
-            self.save_state()
+            self.save_internal_state()
 
         return self
 
@@ -363,7 +413,7 @@ class AIFlow:
             print()
 
         if self.save_state_per_step:
-            self.save_state()
+            self.save_internal_state()
 
         return self
 
@@ -394,7 +444,7 @@ class AIFlow:
 
         try:
             completion = self.client.chat.completions.create(**params)
-            self.add_token_usage(completion.usage)
+            self.update_token_usage(completion.usage)
             return completion.choices[0].message.content
         except OpenAIError as e:
             logging.error(f"OpenAI API error: {e}")
@@ -477,7 +527,7 @@ class AIFlow:
         print(self.context_map[label])
         return self
 
-    def show_context_keys(self) -> "AIFlow":
+    def display_context_keys(self) -> "AIFlow":
         """
         Show all context keys.
 
@@ -586,7 +636,7 @@ class AIFlow:
             self.set_context_of(label=heading_label, content=response)
 
             if self.save_state_per_step:
-                self.save_state()
+                self.save_internal_state()
 
     def generate_headings_for_contexts(
         self,
@@ -726,48 +776,6 @@ class AIFlow:
         return display(Markdown(self.context_map[label]))
 
     #
-    # Saving state
-    #
-    def save_internal_state(self, filename: str = "") -> "AIFlow":
-        """
-        Save the internal state to a file.
-
-        :param filename: Name of the file to save the state
-        :return: self
-        """
-        if filename == "" and self.latest_state_filename == "":
-            logging.error("Error - no state filename provided")
-            return self
-
-        if filename == "":
-            filename = self.latest_state_filename
-
-        self.latest_state_filename = filename
-
-        state_to_save = self.__dict__.copy()
-        state_to_save.pop("client", None)
-        with open(filename, "w") as f:
-            json.dump(state_to_save, f, indent=4)
-
-        return self
-
-    def load_internal_state(self, filename: str = "state.json") -> "AIFlow":
-        """
-        Load the internal state from a file.
-
-        :param filename: Name of the file to load the state from
-        :return: self
-        """
-        self.latest_state_filename = filename
-        try:
-            with open(filename, "r") as f:
-                state = json.load(f)
-            self.__dict__.update(state)
-        except FileNotFoundError:
-            logging.error(f"File '{filename}' not found.")
-        return self
-
-    #
     # Image generation
     # dall-e-3 dall-e-2
     # 1024x1024 512x512
@@ -898,7 +906,7 @@ class AIFlow:
         )
 
         # increase the tokens using completion.usage
-        self.add_token_usage(response)
+        self.update_token_usage(response)
 
         if self.verbose:
             print(response.choices[0].message)
@@ -951,7 +959,7 @@ class AIFlow:
         response.stream_to_file(speech_file_path)
 
         # increase the tokens using completion.usage
-        self.add_token_usage(response)
+        self.update_token_usage(response)
 
         self.audio_map[label] = filename
         self.context_map["latest_speech_file"] = filename
