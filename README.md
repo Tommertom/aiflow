@@ -50,7 +50,7 @@ The code has been optimized using the Aider tool.
 - `filter_messages(self, func)`: Filter chat messages using a function.
 - `reduce_messages_to_text(self, func)`: Reduce chat messages to text using a function.
 
-### Completion Methods
+### Completion (including JSON schema) Methods
 
 - `generate_completion(self, prompt, label="latest")`: Get a completion for a given prompt.
 - `generate_json_completion(self, prompt, label="latest", schema=BaseModel)`: Get a JSON schema completion for a given prompt and schema.
