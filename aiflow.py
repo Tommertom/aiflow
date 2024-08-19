@@ -11,6 +11,8 @@ from pathlib import Path
 import os
 from IPython.display import Markdown, display
 import markdown
+from pydantic import BaseModel
+
 
 # Configure logging
 logging.basicConfig(
@@ -417,12 +419,37 @@ class AIFlow:
 
         return self
 
+    #
+    # Simple completion
+    #
+    def generate_json_completion(
+        self, prompt: str, label: str = "latest", schema=BaseModel
+    ) -> "AIFlow":
+        if self.verbose:
+            print(prompt)
+            print()
+
+        prompt = self.replace_tags_with_content(prompt)
+        self.context_map["latest_prompt"] = prompt
+        messages = [{"role": "user", "content": prompt}]
+        response = self.call_openai_parse_api(messages=messages, schema=schema)
+        self._update_context(response.json(), label)
+
+        if self.verbose:
+            print(response)
+            print()
+
+        if self.save_state_per_step:
+            self.save_internal_state()
+
+        return self
+
     def _update_context(self, response: str, label: str) -> None:
         self.context_map["latest"] = response
         self.context_map[label] = response
 
     #
-    # OpenAI caller
+    # OpenAI caller - completions
     #
     def call_openai_chat_api(self, messages: List[Dict[str, str]] = []) -> str:
         """
@@ -446,6 +473,39 @@ class AIFlow:
             completion = self.client.chat.completions.create(**params)
             self.update_token_usage(completion.usage)
             return completion.choices[0].message.content
+        except OpenAIError as e:
+            logging.error(f"OpenAI API error: {e}")
+            return "An error occurred with the OpenAI API."
+        except Exception as e:
+            logging.error(f"Unexpected error: {e}")
+            return "An unexpected error occurred."
+
+    #
+    # OpenAI caller - json_schema
+    #
+    def call_openai_parse_api(
+        self, messages: List[Dict[str, str]] = [], schema=BaseModel
+    ) -> str:
+        """
+        Call the OpenAI chat API with the given messages and the schema to generate JONS
+
+        :param messages: List of messages
+        :param schema: Schema based on Pydantic BaseModel
+        :return: Response from the API
+        """
+        params = {
+            "model": self.model,
+            "max_tokens": self.max_tokens,
+            "temperature": self.temperature,
+            "messages": messages,
+            "response_format": schema,
+        }
+
+        try:
+            completion = self.client.beta.chat.completions.parse(**params)
+            self.update_token_usage(completion.usage)
+            print(completion.choices[0].message)
+            return completion.choices[0].message.parsed
         except OpenAIError as e:
             logging.error(f"OpenAI API error: {e}")
             return "An error occurred with the OpenAI API."
