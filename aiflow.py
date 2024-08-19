@@ -1,6 +1,6 @@
 # aiflow.py
 import json
-import logging
+
 from openai import OpenAI, OpenAIError
 from typing import Optional, Callable, List, Dict, Union
 from enum import Enum
@@ -12,12 +12,6 @@ import os
 from IPython.display import Markdown, display
 import markdown
 from pydantic import BaseModel
-
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
 
 
 # chroma helper that converts a query result to a string, so we can use it in the class
@@ -133,9 +127,9 @@ class AIFlow:
 
         :return: self
         """
-        logging.info(f"Model: {self.model}")
-        logging.info(f"Max Tokens: {self.max_tokens}")
-        logging.info(f"Temperature: {self.temperature}")
+        print(f"Model: {self.model}")
+        print(f"Max Tokens: {self.max_tokens}")
+        print(f"Temperature: {self.temperature}")
         return self
 
     def get_token_usage(self) -> Dict[str, int]:
@@ -195,7 +189,7 @@ class AIFlow:
         :return: self
         """
         if filename == "" and self.latest_state_filename == "":
-            logging.error("Error - no state filename provided")
+            print("Error - no state filename provided")
             return self
 
         if filename == "":
@@ -229,7 +223,7 @@ class AIFlow:
 
             self.__dict__.update(state)
         except FileNotFoundError:
-            logging.error(f"File '{filename}' not found.")
+            print(f"File '{filename}' not found.")
         return self
 
     #
@@ -241,14 +235,14 @@ class AIFlow:
 
         :return: self
         """
-        logging.info("Chat Messages:")
-        logging.info(json.dumps(self.chat_messages, indent=4))
-        logging.info("\nContext Map:")
-        logging.info(json.dumps(self.context_map, indent=4))
-        logging.info("\nImages Map:")
-        logging.info(json.dumps(self.images_map, indent=4))
-        logging.info("\nAudio Map:")
-        logging.info(json.dumps(self.audio_map, indent=4))
+        print("Chat Messages:")
+        print(json.dumps(self.chat_messages, indent=4))
+        print("\nContext Map:")
+        print(json.dumps(self.context_map, indent=4))
+        print("\nImages Map:")
+        print(json.dumps(self.images_map, indent=4))
+        print("\nAudio Map:")
+        print(json.dumps(self.audio_map, indent=4))
         return self
 
     def clear_internal_data(self) -> "AIFlow":
@@ -328,7 +322,7 @@ class AIFlow:
         ]
 
         if self.verbose:
-            logging.info(prompt)
+            print(prompt)
 
         if self.save_state_per_step:
             self.save_internal_state()
@@ -362,7 +356,7 @@ class AIFlow:
         self.context_map[label] = response
 
         if self.verbose:
-            logging.info(response)
+            print(response)
 
         if self.save_state_per_step:
             self.save_internal_state()
@@ -425,6 +419,7 @@ class AIFlow:
     def generate_json_completion(
         self, prompt: str, label: str = "latest", schema=BaseModel
     ) -> "AIFlow":
+
         if self.verbose:
             print(prompt)
             print()
@@ -474,10 +469,10 @@ class AIFlow:
             self.update_token_usage(completion.usage)
             return completion.choices[0].message.content
         except OpenAIError as e:
-            logging.error(f"OpenAI API error: {e}")
+            print(f"OpenAI API error: {e}")
             return "An error occurred with the OpenAI API."
         except Exception as e:
-            logging.error(f"Unexpected error: {e}")
+            print(f"Unexpected error: {e}")
             return "An unexpected error occurred."
 
     #
@@ -504,13 +499,12 @@ class AIFlow:
         try:
             completion = self.client.beta.chat.completions.parse(**params)
             self.update_token_usage(completion.usage)
-            print(completion.choices[0].message)
             return completion.choices[0].message.parsed
         except OpenAIError as e:
-            logging.error(f"OpenAI API error: {e}")
+            print(f"OpenAI API error: {e}")
             return "An error occurred with the OpenAI API."
         except Exception as e:
-            logging.error(f"Unexpected error: {e}")
+            print(f"Unexpected error: {e}")
             return "An unexpected error occurred."
 
     #
@@ -619,9 +613,9 @@ class AIFlow:
                 content = file.read()
                 self.context_map[label] = content
         except FileNotFoundError:
-            logging.error(f"The file {filename} does not exist.")
+            print(f"The file {filename} does not exist.")
         except Exception as e:
-            logging.error(f"An error occurred: {e}")
+            print(f"An error occurred: {e}")
         return self
 
     def dump_context_to_file(
@@ -867,7 +861,7 @@ class AIFlow:
         :param html: Whether to return HTML for displaying the image
         :return: self
         """
-        logging.info(f"Generating image with prompt: {prompt}")
+        print(f"Generating image with prompt: {prompt}")
         response = self.client.images.generate(
             model=model,
             prompt=prompt,
@@ -914,7 +908,7 @@ class AIFlow:
             output_filename += ".jpg"
 
         if self.verbose:
-            logging.info(f"Saving {label} to {output_filename}")
+            print(f"Saving {label} to {output_filename}")
 
         if label in self.images_map:
             urllib.request.urlretrieve(self.images_map[label], output_filename)
