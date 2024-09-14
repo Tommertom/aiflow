@@ -17,6 +17,13 @@ The code has been optimized using the Aider tool.
 
 ## AIFlow Class
 
+General method naming:
+
+- `get` returns data in structured format from the class (e.g. JSON, list of strings)
+- `display` shows output on the console, so very helpful in pybook
+- `save` and `load` saves output to/from a file
+- `set` defines a variable or config part of the class
+
 ### Initialization
 
 - `__init__(self, api_key, model=Model.GPT_4, temperature=0, max_tokens=150)`: Initialize the AIFlow class with API key, model, temperature, and max tokens.
@@ -27,7 +34,7 @@ The code has been optimized using the Aider tool.
 - `set_model(self, model=Model.GPT_4)`: Set the model to be used.
 - `set_max_tokens(self, max_tokens=150)`: Set the maximum number of tokens.
 - `set_json_output(self, json_mode=False)`: Set the output format to JSON.
-- `show_model_config(self)`: Display the current model configuration.
+- `display_model_config(self)`: Display the current model configuration.
 - `get_token_usage(self)`: Get the token usage statistics.
 
 ### Output Configuration
@@ -62,13 +69,13 @@ The code has been optimized using the Aider tool.
 - `transform_context(self, label="latest", func=lambda x: x)`: Transform the context using a function.
 - `set_context_of(self, content="", label="latest")`: Set the context for a specified label.
 - `delete_context(self, label="latest")`: Delete the context for a specified label.
-- `show_context_of(self, label="latest")`: Show the context for a specified label.
-- `show_context_keys(self)`: Show all context keys.
+- `display_context_of(self, label="latest")`: Show the context for a specified label.
+- `display_context_keys(self)`: Show all context keys.
 - `return_context_keys(self)`: Return all context keys.
 - `load_to_context(self, filename, label="latest_file")`: Load content from a file into the context.
-- `dump_context_to_file(self, label="latest", filename="")`: Dump the context to a file.
-- `dump_context_to_files(self)`: Dump all contexts to files.
-- `dump_context_to_markdown(self, output_filename="content.md")`: Dump the context to a markdown file.
+- `save_context_to_file(self, label="latest", filename="")`: Dump the context to a file.
+- `save_context_to_files(self)`: Dump all contexts to files.
+- `save_context_to_markdown(self, output_filename="content.md")`: Dump the context to a markdown file.
 - `generate_headings_for_contexts(self, labels=[], prompt="Generate a short 10 word summary of the following content:\n", replace=True)`: Generate headings for multiple contexts.
 - `generate_heading_for_context(self, label="latest", prompt="Generate a short 10 word summary of the following content:\n", replace=True)`: Generate a heading for a single context.
 - `save_context_to_docx(self, output_filename, chapters_to_include=[])`: Save the context to a DOCX file.

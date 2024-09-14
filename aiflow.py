@@ -121,7 +121,7 @@ class AIFlow:
         self.json_mode = json_mode
         return self
 
-    def show_model_config(self) -> "AIFlow":
+    def display_model_config(self) -> "AIFlow":
         """
         Display the current model configuration.
 
@@ -571,7 +571,7 @@ class AIFlow:
             del self.context_map[label]
         return self
 
-    def show_context_of(self, label: str = "latest") -> "AIFlow":
+    def display_context_of(self, label: str = "latest") -> "AIFlow":
         """
         Show the context for a specified label.
 
@@ -618,7 +618,7 @@ class AIFlow:
             print(f"An error occurred: {e}")
         return self
 
-    def dump_context_to_file(
+    def save_context_to_file(
         self, label: str = "latest", filename: str = ""
     ) -> "AIFlow":
         """
@@ -643,17 +643,17 @@ class AIFlow:
 
         return self
 
-    def dump_context_to_files(self) -> "AIFlow":
+    def save_context_to_files(self) -> "AIFlow":
         """
         Dump all contexts to files.
 
         :return: self
         """
         for key, value in self.context_map.items():
-            self.dump_context_to_file(label=key)
+            self.save_context_to_file(label=key)
         return self
 
-    def dump_context_to_markdown(self, output_filename: str = "content.md") -> "AIFlow":
+    def save_context_to_markdown(self, output_filename: str = "content.md") -> "AIFlow":
         """
         Dump the context to a markdown file.
 
@@ -798,6 +798,15 @@ class AIFlow:
         :return: Context as text
         """
         return self.context_map[label]
+
+    def get_context_as_json(self, label: str = "latest") -> str:
+        """
+        Get the context as text for a specified label as json object
+
+        :param label: Label for the context
+        :return: Context as json
+        """
+        return json.loads(self.context_map[label])
 
     def get_reduced_chat_messages_as_text(
         self, func: Optional[Callable[[List[Dict[str, str]]], str]]
