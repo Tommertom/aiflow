@@ -76,6 +76,7 @@ General method naming:
 - `save_context_to_file(self, label="latest", filename="")`: Dump the context to a file.
 - `save_context_to_files(self)`: Dump all contexts to files.
 - `save_context_to_markdown(self, output_filename="content.md")`: Dump the context to a markdown file.
+- `load_multiple_context_from_file(self, output_filename="context_stuff.txt")`: Load multiple context entries from one file.
 - `generate_headings_for_contexts(self, labels=[], prompt="Generate a short 10 word summary of the following content:\n", replace=True)`: Generate headings for multiple contexts.
 - `generate_heading_for_context(self, label="latest", prompt="Generate a short 10 word summary of the following content:\n", replace=True)`: Generate a heading for a single context.
 - `save_context_to_docx(self, output_filename, chapters_to_include=[])`: Save the context to a DOCX file.

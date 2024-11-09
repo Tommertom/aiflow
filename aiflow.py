@@ -691,6 +691,58 @@ class AIFlow:
 
             if self.save_state_per_step:
                 self.save_internal_state()
+                
+    
+def load_multiple_context_from_file(self, filename: str = "") -> "AIFlow":
+    """
+    Load a text file and process its content grouped by keywords.
+
+    Reads a file line by line, identifying sections where each keyword is 
+    followed by content. The keyword lines end with a colon, and all lines 
+    until the next keyword belong to that keyword's content. For each 
+    keyword-content block found, it calls `set_context_of` with the keyword 
+    as the label and the content as the section's text.
+
+    :param filename: Name of the file to load and process
+    :return: None
+    """
+    with open(filename, "r") as file:
+        current_keyword = None
+        current_content = []
+
+        for line in file:
+            line = line.strip()  # Remove whitespace and newline characters
+
+            # Check if the line is a keyword (contains a colon at the end)
+            if line.endswith(":"):
+                # Process the previous keyword-content block
+                if current_keyword:
+                    # Join the collected lines and pass to the function
+                    content = "\n".join(current_content)
+                    self.set_context_of(label=current_keyword, content=content)
+                            
+                    if self.verbose:
+                        print(f"Stored context {current_keyword}")
+
+                # Set new keyword and reset content list
+                current_keyword = line[:-1]  # Remove the colon
+                current_content = []
+
+            else:
+                # Accumulate lines under the current keyword
+                current_content.append(line)
+
+        # Process the last keyword-content block if it exists
+        if current_keyword:
+            content = "\n".join(current_content)
+            self.set_context_of(label=current_keyword, content=content)
+            
+            if self.verbose:
+                print(f"Stored context {current_keyword}")
+
+        if self.save_state_per_step:
+            self.save_internal_state()
+
 
     def generate_headings_for_contexts(
         self,
