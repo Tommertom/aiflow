@@ -517,8 +517,23 @@ class AIFlow:
         :param input_string: Input string with tags
         :return: String with tags replaced by context content
         """
-        for key, value in self.context_map.items():
-            input_string = input_string.replace(f"[{key}]", str(value))
+
+    def replace_tags_with_content(self, input_string: str = "") -> str:
+        """
+        Replace tags in the input string with context content.
+
+        :param input_string: Input string with tags
+        :return: String with tags replaced by context content
+        """
+        while True:
+            previous_string = input_string
+            for key, value in self.context_map.items():
+                input_string = input_string.replace(f"[{key}]", str(value))
+
+            # If no replacements were made in this iteration, break the loop
+            if input_string == previous_string:
+                break
+
         return input_string
 
     #
@@ -691,8 +706,8 @@ class AIFlow:
 
             if self.save_state_per_step:
                 self.save_internal_state()
-                
-    
+
+
 def load_multiple_context_from_file(self, filename: str = "") -> "AIFlow":
     """
     Load a text file and process its content grouped by keywords.
