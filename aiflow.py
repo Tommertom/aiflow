@@ -712,10 +712,10 @@ def load_multiple_context_from_file(self, filename: str = "") -> "AIFlow":
     """
     Load a text file and process its content grouped by keywords.
 
-    Reads a file line by line, identifying sections where each keyword is 
-    followed by content. The keyword lines end with a colon, and all lines 
-    until the next keyword belong to that keyword's content. For each 
-    keyword-content block found, it calls `set_context_of` with the keyword 
+    Reads a file line by line, identifying sections where each keyword is
+    followed by content. The keyword lines end with a colon, and all lines
+    until the next keyword belong to that keyword's content. For each
+    keyword-content block found, it calls `set_context_of` with the keyword
     as the label and the content as the section's text.
 
     :param filename: Name of the file to load and process
@@ -735,7 +735,7 @@ def load_multiple_context_from_file(self, filename: str = "") -> "AIFlow":
                     # Join the collected lines and pass to the function
                     content = "\n".join(current_content)
                     self.set_context_of(label=current_keyword, content=content)
-                            
+
                     if self.verbose:
                         print(f"Stored context {current_keyword}")
 
@@ -751,13 +751,12 @@ def load_multiple_context_from_file(self, filename: str = "") -> "AIFlow":
         if current_keyword:
             content = "\n".join(current_content)
             self.set_context_of(label=current_keyword, content=content)
-            
+
             if self.verbose:
                 print(f"Stored context {current_keyword}")
 
         if self.save_state_per_step:
             self.save_internal_state()
-
 
     def generate_headings_for_contexts(
         self,
