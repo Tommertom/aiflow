@@ -517,14 +517,6 @@ class AIFlow:
         :param input_string: Input string with tags
         :return: String with tags replaced by context content
         """
-
-    def replace_tags_with_content(self, input_string: str = "") -> str:
-        """
-        Replace tags in the input string with context content.
-
-        :param input_string: Input string with tags
-        :return: String with tags replaced by context content
-        """
         while True:
             previous_string = input_string
             for key, value in self.context_map.items():
@@ -668,95 +660,96 @@ class AIFlow:
             self.save_context_to_file(label=key)
         return self
 
-    def save_context_to_markdown(self, output_filename: str = "content.md") -> "AIFlow":
+    def load_multiple_context_from_file(self, filename: str = "") -> "AIFlow":
         """
-        Dump the context to a markdown file.
+        Load a text file and process its content grouped by keywords.
 
-        :param output_filename: Name of the markdown file
-        :return: self
+        Reads a file line by line, identifying sections where each keyword is
+        followed by content. The keyword lines end with a colon, and all lines
+        until the next keyword belong to that keyword's content. For each
+        keyword-content block found, it calls `set_context_of` with the keyword
+        as the label and the content as the section's text.
+
+        :param filename: Name of the file to load and process
+        :return: None
         """
-        with open(output_filename, "w") as file:
-            for chapter, content in self.context_map.items():
-                file.write(f"# {chapter}\n\n")
-                file.write(f"{content}\n\n")
-        return self
+        with open(filename, "r") as file:
+            current_keyword = None
+            current_content = []
 
-    def generate_heading_for_context(
-        self, label: str, prompt: str, replace: bool
-    ) -> None:
-        """
-        Generate a heading for a single context.
+            for line in file:
+                line = line.strip()  # Remove whitespace and newline characters
 
-        :param label: Label for the context
-        :param prompt: Prompt for generating the heading
-        :param replace: Whether to replace the existing heading
-        """
-        content = self.context_map.get(label, "")
-        if not content:
-            return
+                # Check if the line is a keyword (contains a colon at the end)
+                if line.endswith(":"):
+                    # Process the previous keyword-content block
+                    if current_keyword:
+                        # Join the collected lines and pass to the function
+                        content = "\n".join(current_content)
+                        self.set_context_of(label=current_keyword, content=content)
 
-        heading_label = label + "_heading"
-        existing_heading = self.context_map.get(heading_label)
+                        if self.verbose:
+                            print(f"Stored context {current_keyword}")
 
-        if replace or not existing_heading:
-            full_prompt = f"{prompt}{content}"
-            messages = [{"role": "user", "content": full_prompt}]
-            response = self.call_openai_chat_api(messages=messages)
-            self.set_context_of(label=heading_label, content=response)
+                    # Set new keyword and reset content list
+                    current_keyword = line[:-1]  # Remove the colon
+                    current_content = []
+
+                else:
+                    # Accumulate lines under the current keyword
+                    current_content.append(line)
+
+            # Process the last keyword-content block if it exists
+            if current_keyword:
+                content = "\n".join(current_content)
+                self.set_context_of(label=current_keyword, content=content)
+
+                if self.verbose:
+                    print(f"Stored context {current_keyword}")
 
             if self.save_state_per_step:
                 self.save_internal_state()
 
+        def save_context_to_markdown(
+            self, output_filename: str = "content.md"
+        ) -> "AIFlow":
+            """
+            Dump the context to a markdown file.
 
-def load_multiple_context_from_file(self, filename: str = "") -> "AIFlow":
-    """
-    Load a text file and process its content grouped by keywords.
+            :param output_filename: Name of the markdown file
+            :return: self
+            """
+            with open(output_filename, "w") as file:
+                for chapter, content in self.context_map.items():
+                    file.write(f"# {chapter}\n\n")
+                    file.write(f"{content}\n\n")
+            return self
 
-    Reads a file line by line, identifying sections where each keyword is
-    followed by content. The keyword lines end with a colon, and all lines
-    until the next keyword belong to that keyword's content. For each
-    keyword-content block found, it calls `set_context_of` with the keyword
-    as the label and the content as the section's text.
+        def generate_heading_for_context(
+            self, label: str, prompt: str, replace: bool
+        ) -> None:
+            """
+            Generate a heading for a single context.
 
-    :param filename: Name of the file to load and process
-    :return: None
-    """
-    with open(filename, "r") as file:
-        current_keyword = None
-        current_content = []
+            :param label: Label for the context
+            :param prompt: Prompt for generating the heading
+            :param replace: Whether to replace the existing heading
+            """
+            content = self.context_map.get(label, "")
+            if not content:
+                return
 
-        for line in file:
-            line = line.strip()  # Remove whitespace and newline characters
+            heading_label = label + "_heading"
+            existing_heading = self.context_map.get(heading_label)
 
-            # Check if the line is a keyword (contains a colon at the end)
-            if line.endswith(":"):
-                # Process the previous keyword-content block
-                if current_keyword:
-                    # Join the collected lines and pass to the function
-                    content = "\n".join(current_content)
-                    self.set_context_of(label=current_keyword, content=content)
+            if replace or not existing_heading:
+                full_prompt = f"{prompt}{content}"
+                messages = [{"role": "user", "content": full_prompt}]
+                response = self.call_openai_chat_api(messages=messages)
+                self.set_context_of(label=heading_label, content=response)
 
-                    if self.verbose:
-                        print(f"Stored context {current_keyword}")
-
-                # Set new keyword and reset content list
-                current_keyword = line[:-1]  # Remove the colon
-                current_content = []
-
-            else:
-                # Accumulate lines under the current keyword
-                current_content.append(line)
-
-        # Process the last keyword-content block if it exists
-        if current_keyword:
-            content = "\n".join(current_content)
-            self.set_context_of(label=current_keyword, content=content)
-
-            if self.verbose:
-                print(f"Stored context {current_keyword}")
-
-        if self.save_state_per_step:
-            self.save_internal_state()
+                if self.save_state_per_step:
+                    self.save_internal_state()
 
     def generate_headings_for_contexts(
         self,
